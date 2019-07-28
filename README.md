@@ -8,6 +8,10 @@ Original code was written by Robert Ivancic. Please feel free to email
 ivancic91 [at] gmail [dot] com. Publications with this code are
 forthcoming.
 
+## Mathematical introduction
+
+<a href="https://www.codecogs.com/eqnedit.php?latex=\mathcal{W}(A,f)&space;=&space;(T,\bar{f})" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\mathcal{W}(A,f)&space;=&space;(T,\bar{f})" title="\mathcal{W}(A,f) = (T,\bar{f})" /></a>
+
 ## Installation
 
 Here, we assume that installed you have (a) python 3 (b) anaconda, and
@@ -41,6 +45,7 @@ conda deactivate
 **(Step 2)** Link c++ libraries. We should be able to do this by running:
 
 ```bash
+cd ~/RSoft
 python link_cpp.py
 ```
 
