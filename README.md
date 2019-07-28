@@ -10,16 +10,23 @@ forthcoming.
 
 ## Installation
 
-Here, we assume that you have (a) python 3 and (b) Anaconda installed
-on your system.
+Here, we assume that installed you have (a) python 3 (b) anaconda, and
+(c) git on your system.
 
-(Step 0) Go to your home directory and 
+**(Step 0)** Go to your home directory and clone this repository. This
+can be done through the commands:
 
-(Step 1) Create a conda environment. This will ensure that you can use
+```bash
+cd ~
+git clone https://github.com/Ivancic91/RSoft
+``` 
+
+**(Step 1)** Create a conda environment. This will ensure that you can use
 the packages you need without interfering with existing packages. You
 may do this from the yml environment in the RSoft directory.
 
 ```bash
+cd ~/RSoft
 conda env create -f RSoft.yml
 ```
 
@@ -31,7 +38,7 @@ conda activate RSoft
 conda deactivate
 ```
 
-(Step 2) Link c++ libraries. We should be able to do this by running:
+**(Step 2)** Link c++ libraries. We should be able to do this by running:
 
 ```bash
 python link_cpp.py
