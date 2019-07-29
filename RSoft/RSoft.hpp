@@ -13,6 +13,8 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
+
+// link_cpp netcdf DO NOT REMOVE THIS LINE
 #include <netcdf.h>
 
 class RSoft

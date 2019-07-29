@@ -9,10 +9,12 @@
 #define NETCDFIO_HPP_
 #include <string>
 #include <vector>
-#include <netcdf.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+// link_cpp netcdf DO NOT REMOVE THIS LINE
+#include <netcdf.h>
 
 class NetCDFIO
 {

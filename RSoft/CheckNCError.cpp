@@ -2,7 +2,6 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <netcdf.h>
 
 // Checks if netCDF error has occured after performing operation
 // Parameters:
