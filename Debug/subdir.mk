@@ -4,13 +4,13 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
-../BASECODE_MAIN.cpp 
+../RSoft_MAIN.cpp 
 
 OBJS += \
-./BASECODE_MAIN.o 
+./RSoft_MAIN.o 
 
 CPP_DEPS += \
-./BASECODE_MAIN.d 
+./RSoft_MAIN.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

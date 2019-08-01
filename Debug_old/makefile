@@ -46,19 +46,19 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: BASECODE2
+all: RSoft
 
 # Tool invocations
-BASECODE2: $(OBJS) $(USER_OBJS)
+RSoft: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MacOS X C++ Linker'
-	g++ -std=c++11 -L$(NETCDFHOME)/lib -o "BASECODE" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++ -std=c++11 -L$(NETCDFHOME)/lib -o "RSoft.exe" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(C++_DEPS)$(OBJS)$(C_DEPS)$(CC_DEPS)$(CPP_DEPS)$(EXECUTABLES)$(CXX_DEPS)$(C_UPPER_DEPS) BASECODE2
+	-$(RM) $(C++_DEPS)$(OBJS)$(C_DEPS)$(CC_DEPS)$(CPP_DEPS)$(EXECUTABLES)$(CXX_DEPS)$(C_UPPER_DEPS) RSoft.exe
 	-@echo ' '
 
 .PHONY: all clean dependents

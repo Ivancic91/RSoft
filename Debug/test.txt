@@ -1,0 +1,1 @@
+./BASECODE ~/Hongyi_Pillars/1mm/AMBER_FILES/pre_soft_run13.nc ~/Hongyi_Pillars/1mm/RSoftSF_FILES/RSoftSF.nc out.nc s s
