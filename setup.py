@@ -28,12 +28,16 @@ for dname, dirs, files in os.walk(debug_dir):
   for fname in files:
     if fname == 'makefile' or fname[-3:] == '.mk':
       fpath = os.path.join(dname, fname)
-      print(fpath)
       with open(fpath) as f:
         s = f.read()
       s = s.replace("$(NETCDFHOME)", str_netcdf)
       with open(fpath, "w") as f:
         f.write(s)
 
-
+# Adds RSoftPython to the python path and sources .bashrc
+rsoft_dir = path[0]+'/RSoftPython/'
+f=open(os.path.expanduser('~')+'/.bashrc', 'a+')
+f.write('\n# Added by RSoft setup.py\n')
+f.write('export PYTHONPATH="${PYTHONPATH}:'+rsoft_dir+'"')
+f.close()
 

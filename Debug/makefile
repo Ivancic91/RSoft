@@ -52,7 +52,7 @@ all: BASECODE2
 BASECODE2: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MacOS X C++ Linker'
-	g++ -std=c++11 -L$(NETCDFHOME)/lib -o "BASECODE" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++ -std=c++11 -L/home/ivancicr/anaconda3envs/RSoft1/lib -o "BASECODE" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
