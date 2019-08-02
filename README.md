@@ -55,11 +55,14 @@ conda deactivate
 ```bash
 cd ~/RSoft
 python setup.py
+source ~/.bashrc
 ```
 
 Congratulations! You have installed RSoft.
 
 ## Tutorial
+
+
 
 ## FAQs
 

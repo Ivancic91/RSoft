@@ -36,8 +36,15 @@ for dname, dirs, files in os.walk(debug_dir):
 
 # Adds RSoftPython to the python path and sources .bashrc
 rsoft_dir = path[0]+'/RSoftPython/'
-f=open(os.path.expanduser('~')+'/.bashrc', 'a+')
-f.write('\n# Added by RSoft setup.py\n')
-f.write('export PYTHONPATH="${PYTHONPATH}:'+rsoft_dir+'"')
+f=open(os.path.expanduser('~')+'/.bashrc')
+lines = f.readlines()
 f.close()
+if '# Added by RSoft setup.py\n' not in lines:
+  f=open(os.path.expanduser('~')+'/.bashrc', 'a+')
+  f.write('\n# Added by RSoft setup.py\n')
+  f.write('export PYTHONPATH="${PYTHONPATH}:'+rsoft_dir+'"')
+  f.close()
+  
+else:
+  print('Has already added RSoftPython to ~/.bashrc')
 
