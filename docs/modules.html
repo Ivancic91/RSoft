@@ -98,6 +98,18 @@ objects.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.OpenDynamicsI" title="RSoftTools.RSoft.OpenDynamicsI"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.OpenDynamicsI</span></code></a>(nc_file_name,&nbsp;…)</td>
+<td>Opens dynamic file in AMBER (netCDF) file format</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.OpenPlaneO" title="RSoftTools.RSoft.OpenPlaneO"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.OpenPlaneO</span></code></a>(nc_file_name)</td>
+<td>Opens RSoftPlane file</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.OpenSFI" title="RSoftTools.RSoft.OpenSFI"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.OpenSFI</span></code></a>(nc_file_name)</td>
+<td>Opens RSoftSF file</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.OpenSFO" title="RSoftTools.RSoft.OpenSFO"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.OpenSFO</span></code></a>(nc_file_name)</td>
+<td>Opens RSoftSF file</td>
+</tr>
 <tr class="row-odd"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.CloseDynamicsI" title="RSoftTools.RSoft.CloseDynamicsI"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.CloseDynamicsI</span></code></a>()</td>
 <td>CLoses input of AMBER NetCDF dynamics file</td>
 </tr>
@@ -116,32 +128,72 @@ objects.</p>
 <tr class="row-even"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.GetRadial" title="RSoftTools.RSoft.GetRadial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.GetRadial</span></code></a>(f)</td>
 <td>Gets radial structure functions</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.OpenDynamicsI" title="RSoftTools.RSoft.OpenDynamicsI"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.OpenDynamicsI</span></code></a>(nc_file_name,&nbsp;…)</td>
-<td>Opens dynamic file in AMBER (netCDF) file format</td>
+<tr class="row-odd"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.SetAngular" title="RSoftTools.RSoft.SetAngular"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.SetAngular</span></code></a>(f,&nbsp;SF)</td>
+<td>Sets angular structure functions</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.OpenPlaneO" title="RSoftTools.RSoft.OpenPlaneO"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.OpenPlaneO</span></code></a>(nc_file_name)</td>
-<td>Opens RSoftPlane file</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.OpenSFI" title="RSoftTools.RSoft.OpenSFI"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.OpenSFI</span></code></a>(nc_file_name)</td>
-<td>Opens RSoftSF file</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.OpenSFO" title="RSoftTools.RSoft.OpenSFO"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.OpenSFO</span></code></a>(nc_file_name)</td>
-<td>Opens RSoftSF file</td>
+<tr class="row-even"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.SetRadial" title="RSoftTools.RSoft.SetRadial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.SetRadial</span></code></a>(f,&nbsp;SF)</td>
+<td>Sets radial structure functions</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.SelectTrainingSet" title="RSoftTools.RSoft.SelectTrainingSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.SelectTrainingSet</span></code></a>(…[,&nbsp;…])</td>
 <td>Selects training set</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.SetAngular" title="RSoftTools.RSoft.SetAngular"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.SetAngular</span></code></a>(f,&nbsp;SF)</td>
-<td>Sets angular structure functions</td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.SetRadial" title="RSoftTools.RSoft.SetRadial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.SetRadial</span></code></a>(f,&nbsp;SF)</td>
-<td>Sets radial structure functions</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.Train" title="RSoftTools.RSoft.Train"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.Train</span></code></a>([n_eg,&nbsp;K,&nbsp;…])</td>
 <td>Trains a softness hyperplane</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.WritePlane" title="RSoftTools.RSoft.WritePlane"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.WritePlane</span></code></a>()</td>
 <td>Writes plane to RSoftPlane file</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="rsoft-attributes">
+<h2>RSoft Attributes<a class="headerlink" href="#rsoft-attributes" title="Permalink to this headline">¶</a></h2>
+<p>The following provides a list of attributes that can be used on RSoft
+objects.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.etol_radial" title="RSoftTools.RSoft.etol_radial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.etol_radial</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.mus" title="RSoftTools.RSoft.mus"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.mus</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.radial_Xs" title="RSoftTools.RSoft.radial_Xs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.radial_Xs</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.radial_Ys" title="RSoftTools.RSoft.radial_Ys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.radial_Ys</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.etol_angular" title="RSoftTools.RSoft.etol_angular"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.etol_angular</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.xis" title="RSoftTools.RSoft.xis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.xis</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.lambdas" title="RSoftTools.RSoft.lambdas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.lambdas</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.zetas" title="RSoftTools.RSoft.zetas"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.zetas</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.angular_Xs" title="RSoftTools.RSoft.angular_Xs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.angular_Xs</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.angular_Ys" title="RSoftTools.RSoft.angular_Ys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.angular_Ys</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.angular_Zs" title="RSoftTools.RSoft.angular_Zs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.angular_Zs</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.training_R" title="RSoftTools.RSoft.training_R"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.training_R</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="RSoftTools.html#RSoftTools.RSoft.training_NR" title="RSoftTools.RSoft.training_NR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RSoftTools.RSoft.training_NR</span></code></a></td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -178,6 +230,7 @@ objects.</p>
 <li><a class="reference internal" href="#">RSoftPython</a><ul>
 <li><a class="reference internal" href="#rsofttools-classes">RSoftTools Classes</a></li>
 <li><a class="reference internal" href="#rsoft-methods">RSoft Methods</a></li>
+<li><a class="reference internal" href="#rsoft-attributes">RSoft Attributes</a></li>
 <li><a class="reference internal" href="#mdtools-methods">MDTools Methods</a></li>
 </ul>
 </li>

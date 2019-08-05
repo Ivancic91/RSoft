@@ -48,21 +48,42 @@ objects.
 .. autosummary::
             :toctree: _autosummary
 
+   RSoftTools.RSoft.OpenDynamicsI
+   RSoftTools.RSoft.OpenPlaneO
+   RSoftTools.RSoft.OpenSFI
+   RSoftTools.RSoft.OpenSFO
    RSoftTools.RSoft.CloseDynamicsI
    RSoftTools.RSoft.ClosePlaneO
    RSoftTools.RSoft.CloseSFI
    RSoftTools.RSoft.CloseSFO
    RSoftTools.RSoft.GetAngular
    RSoftTools.RSoft.GetRadial
-   RSoftTools.RSoft.OpenDynamicsI
-   RSoftTools.RSoft.OpenPlaneO
-   RSoftTools.RSoft.OpenSFI
-   RSoftTools.RSoft.OpenSFO
-   RSoftTools.RSoft.SelectTrainingSet
    RSoftTools.RSoft.SetAngular
    RSoftTools.RSoft.SetRadial
+   RSoftTools.RSoft.SelectTrainingSet
    RSoftTools.RSoft.Train
    RSoftTools.RSoft.WritePlane
+
+RSoft Attributes
+----------------
+
+The following provides a list of attributes that can be used on RSoft
+objects.
+
+.. autosummary::
+   RSoftTools.RSoft.etol_radial
+   RSoftTools.RSoft.mus
+   RSoftTools.RSoft.radial_Xs
+   RSoftTools.RSoft.radial_Ys
+   RSoftTools.RSoft.etol_angular
+   RSoftTools.RSoft.xis
+   RSoftTools.RSoft.lambdas
+   RSoftTools.RSoft.zetas
+   RSoftTools.RSoft.angular_Xs
+   RSoftTools.RSoft.angular_Ys
+   RSoftTools.RSoft.angular_Zs
+   RSoftTools.RSoft.training_R
+   RSoftTools.RSoft.training_NR
 
 MDTools Methods
 ---------------
