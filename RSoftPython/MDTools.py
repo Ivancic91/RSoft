@@ -3,17 +3,48 @@ import sys
 
 
 class MDTools:
+  """ Molecular Dynamics Tools for python
+
+  This class is designed to provide some standard molecular dynamics
+  tools to analyze trajectories.
+
+  """
 
   def __init__(self):
     self.tmp = False
 
-  # Difference between two vectors or sets of vectors
-  # d = dimension of space, N = # of vectors (if applicable)
-  # rf = final vector (d) or set of vectors (N, d)
-  # ri = initial vector (d) or set of vectors (N, d)
-  # bc = boundary conditions (d)
-  # bb = box boundaries (d, 2)
   def DeltaR(self, rf, ri, bb, bc):
+    """ Difference between two vectors or sets of vectors
+    
+    Calculates the difference between two positions rf and ri (rf-ri) 
+    with respect to the box boundaries (bb) and the boundary conditions
+    (bc). The numpy arrays rf and ri can either be single particle
+    positions or sets of particle positions. Let d = dimension of the
+    space and N = number of vectors.
+
+    Parameters
+    ----------
+    rf : numpy array, either (d) or (N, d)
+      Final positions of particle(s) in d-dimensional space.
+    ri : numpy array, either (d) or (N, d)
+      Initial positions of particle(s) in d-dimensional space.
+    bb : numpy array, (d, 2)
+      Box boundaries of simulation or the experiment. For d=2, this
+      should be formatted [[low_x, high_x],[low_y, high_y]]. In d=3,
+      [[low_x, high_x],[low_y, high_y],[low_z, high_z]].
+    bc : numpy str array, (d)
+      Boundary conditions of the experiment or simulation. Each value
+      must be a single character string denoting the boundary condition
+      in each direction. 'p' means periodic boundary conditions. 's' 
+      means shrink wrapped bounday conditions. 'f' means fixed boundary
+      conditions.
+
+    Returns
+    -------
+    dr : numpy array, either (d) or (N, d)
+      The rf-ri given the box boundaries and boundary conditions.
+
+    """
 
     # Checks if all dimensions are matching
     dim_f = rf.shape[-1]
@@ -21,7 +52,9 @@ class MDTools:
     dim_bc = len(bc)
     dim_bb = bb.shape[0]
     if dim_f != dim_i or dim_f != dim_bc or dim_f != dim_bb:
-      sys.exit('ERROR: dimension mismatch for rf, ri, bc, and bb.shape[0]')
+      str_ = 'ERROR: dimension mismatch for rf, ri, bc, and'
+      str_ += ' bb.shape[0]'
+      sys.exit(str_)
 
     # Checks if rf and ri are vectors or vector of vectors
     arr_f_dim = len(rf.shape)
@@ -45,7 +78,9 @@ class MDTools:
       # the same number of particles, N
       if arr_f_dim == 2 and arr_i_dim == 2:
         if rf.shape[0] != ri.shape[0]:
-          sys.exit('ERROR: rf and ri don\'t have same number of particles, N')
+          str_ = 'ERROR: rf and ri don\'t have same number of '
+          str_ += 'particles, N'
+          sys.exit(str_)
 
       dr = rf - ri
       idx_p_arr = np.where(bc=='p')[0]
@@ -57,24 +92,41 @@ class MDTools:
 
     # CASE: rf or ri are neither vectors or vectors of vectors
     else:
-      sys.exit("ERROR: rf or ri are not vectors or vectors of vectors")
+      sys.exit('ERROR: rf or ri are not vectors or vectors of vectors')
 
     return dr
             
-
-  """
-  functions needed:
-  AddNeighbors
-  AddCellPos
-  Unstack
-  """
-
-  # Gets neighbor list for a set of particles
-  # pos_t = (n_p, d) numpy array of particle positions
-  # bb_t = (d, 2) numpy array of box boundaries
-  # bc = (d) numpy array of strings with 'p' indicating periodic
-  # R_c = float of cutoff radius
   def GetNList(self, pos_t, bb_t, bc, R_c):
+    """ Obtains a neighbor list for a set of particles
+
+    Finds all of the neighbors within a cuttoff distance (R_c) for a 
+    set of particles (pos_t) given a set of box boundaries (bb_t), and
+    a set of boundary conditions.
+
+    Parameters
+    ----------
+    pos_t : numpy array, (n_p, d)
+      Set of n_p particle positions in d-dimensional space
+    bb_t : numpy array, (d, 2)
+      Box boundaries of simulation or the experiment. For d=2, this
+      should be formatted [[low_x, high_x],[low_y, high_y]]. In d=3,
+      [[low_x, high_x],[low_y, high_y],[low_z, high_z]].
+    bc : numpy str array, (d)
+      Boundary conditions of the experiment or simulation. Each value
+      must be a single character string denoting the boundary condition
+      in each direction. 'p' means periodic boundary conditions. 's' 
+      means shrink wrapped bounday conditions. 'f' means fixed boundary
+      conditions.
+    R_c : float
+      Cutoff radius of the simulation.
+
+    Returns
+    -------
+    n_list : python array, (n_p)
+      Python list in which n_list[i] is a numpy array of all neighbors
+      of particle i from pos_t. 
+
+    """
 
     # Initializes variables
     self.__R_c_2 = R_c*R_c
