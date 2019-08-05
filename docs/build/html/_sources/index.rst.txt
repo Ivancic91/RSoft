@@ -6,7 +6,9 @@
 RSoft
 =====
 
-EXAMPLE TEXT GOES HERE!!
+The following is a set of documentation for the python part of the
+RSoft project. Other code, documentation, and a tutorial are found
+on https://github.com/Ivancic91/RSoft.
 
 .. toctree::
    :maxdepth: 2
