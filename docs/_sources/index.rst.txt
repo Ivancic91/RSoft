@@ -15,6 +15,7 @@ on https://github.com/Ivancic91/RSoft.
    :caption: Contents:
 
    modules
+   RSoftTools
 
 Indices and tables
 ==================

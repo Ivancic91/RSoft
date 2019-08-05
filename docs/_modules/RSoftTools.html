@@ -69,6 +69,8 @@
 <span class="sd">  Attributes</span>
 <span class="sd">  ----------</span>
 <span class="sd">  etol_radial : float</span>
+<span class="sd">    \epsilon_R</span>
+
 <span class="sd">    Radial error tolerance (if available). Can obtain after OpenSFI.</span>
 <span class="sd">  mus : numpy array (n_SF_rad)</span>
 <span class="sd">    Mu structure function parameters (if available). Can obtain after</span>
@@ -145,7 +147,7 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    nc_file_name : str</span>
-<span class="sd">      Name of RSoftPlane file you wish to write to.</span>
+<span class="sd">      Name of RSoftSF file you wish to write to.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Checks errors</span>
@@ -156,7 +158,7 @@
       <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR: Cannot use OpenPlaneO and OpenSFO&#39;</span><span class="p">)</span>
       <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="c1"># Opens RSoftPlane and initializes values</span>
+    <span class="c1"># Opens RSoftSF and initializes values</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__nc_RSoft_O</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">nc_file_name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;NETCDF4&#39;</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__nc_RSoft_O</span><span class="o">.</span><span class="n">Conventions</span> <span class="o">=</span> <span class="s1">&#39;RSoftSF&#39;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__nc_RSoft_O</span><span class="o">.</span><span class="n">ConventionVersion</span> <span class="o">=</span> <span class="s1">&#39;1.0&#39;</span>
@@ -807,8 +809,8 @@
       <span class="bp">self</span><span class="o">.</span><span class="n">__nc_RSoft_O</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;frame&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">__nc_RSoft_O</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;atom&#39;</span><span class="p">,</span> <span class="n">SF</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__setRadial</span><span class="p">:</span>
-      <span class="c1">#self.__nc_RSoft_O.createDimension(&#39;radial_structure_functions&#39;,\</span>
-      <span class="c1">#      SF.shape[1])</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">__nc_RSoft_O</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;radial_structure_functions&#39;</span><span class="p">,</span>\
+            <span class="n">SF</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">__nc_RSoft_O_radial_structures</span> <span class="o">=</span> \
             <span class="bp">self</span><span class="o">.</span><span class="n">__nc_RSoft_O</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s1">&#39;radial_structures&#39;</span><span class="p">,</span> \
             <span class="s1">&#39;f4&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;frame&#39;</span><span class="p">,</span><span class="s1">&#39;atom&#39;</span><span class="p">,</span><span class="s1">&#39;radial_structure_functions&#39;</span><span class="p">))</span>
@@ -839,8 +841,8 @@
       <span class="bp">self</span><span class="o">.</span><span class="n">__nc_RSoft_O</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;frame&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">__nc_RSoft_O</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;atom&#39;</span><span class="p">,</span> <span class="n">SF</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__setAngular</span><span class="p">:</span>
-      <span class="c1">#self.__nc_RSoft_O.createDimension(&#39;angular_structure_functions&#39;,\</span>
-      <span class="c1">#      SF.shape[1])</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">__nc_RSoft_O</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;radial_structure_functions&#39;</span><span class="p">,</span>\
+            <span class="n">SF</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">__nc_RSoft_O_angular_structures</span> <span class="o">=</span> \
             <span class="bp">self</span><span class="o">.</span><span class="n">__nc_RSoft_O</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="s1">&#39;angular_structures&#39;</span><span class="p">,</span> \
             <span class="s1">&#39;f4&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;frame&#39;</span><span class="p">,</span><span class="s1">&#39;atom&#39;</span><span class="p">,</span><span class="s1">&#39;angular_structure_functions&#39;</span><span class="p">))</span>
@@ -851,186 +853,299 @@
     <span class="c1"># Marks as run</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__setAngular</span> <span class="o">=</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="RSoft.CloseSFO"><a class="viewcode-back" href="../RSoftTools.html#RSoftTools.RSoft.CloseSFO">[docs]</a>  <span class="k">def</span> <span class="nf">CloseSFO</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Closes RSoftSFO file</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">__nc_RSoft_O</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
-
 <div class="viewcode-block" id="RSoft.CloseSFI"><a class="viewcode-back" href="../RSoftTools.html#RSoftTools.RSoft.CloseSFI">[docs]</a>  <span class="k">def</span> <span class="nf">CloseSFI</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Closes RSoftSFI file</span>
+    <span class="sd">&quot;&quot;&quot; Closes input of RSoftSF file</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__nc_RSoft_I</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
+<div class="viewcode-block" id="RSoft.CloseSFO"><a class="viewcode-back" href="../RSoftTools.html#RSoftTools.RSoft.CloseSFO">[docs]</a>  <span class="k">def</span> <span class="nf">CloseSFO</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Closes output of RSoftSF</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
 <div class="viewcode-block" id="RSoft.CloseDynamicsI"><a class="viewcode-back" href="../RSoftTools.html#RSoftTools.RSoft.CloseDynamicsI">[docs]</a>  <span class="k">def</span> <span class="nf">CloseDynamicsI</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  
-    <span class="sd">&quot;&quot;&quot; CLoses AMBER NetCDF dynamics file</span>
+    <span class="sd">&quot;&quot;&quot; CLoses input of AMBER NetCDF dynamics file</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__NcIO_dyn</span><span class="o">.</span><span class="n">CloseI</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="RSoft.ClosePlaneO"><a class="viewcode-back" href="../RSoftTools.html#RSoftTools.RSoft.ClosePlaneO">[docs]</a>  <span class="k">def</span> <span class="nf">ClosePlaneO</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Closes RSoftPlaneO file</span>
+    <span class="sd">&quot;&quot;&quot; Closes output of RSoftPlane file</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">__nc_RSoft_O</span><span class="o">.</span><span class="n">close</span><span class="p">()</span> </div>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__nc_RSoft_O</span><span class="o">.</span><span class="n">close</span><span class="p">()</span> </div></div>
 
-<div class="viewcode-block" id="RSoft.Test"><a class="viewcode-back" href="../RSoftTools.html#RSoftTools.RSoft.Test">[docs]</a>  <span class="k">def</span> <span class="nf">Test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">K_test</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">n_eg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">K</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> \
-          <span class="n">C_parameters</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">10.</span><span class="p">,</span> <span class="mf">100.</span><span class="p">]),</span> \
-          <span class="n">norm_SF</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">norm_plane</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">tol_</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span> \
-          <span class="n">max_iter_</span><span class="o">=</span><span class="mi">10000</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Tests a softness hyperplane</span>
 
-<span class="sd">    Tests a softness hyperplane for all species given an RSoftSF file</span>
-<span class="sd">    and an AMBER molecular dynamics file containing dynamics_name</span>
-<span class="sd">    data column. Does this testing using stratified nested K-folds.</span>
+
+<div class="viewcode-block" id="MDTools"><a class="viewcode-back" href="../RSoftTools.html#RSoftTools.MDTools">[docs]</a><span class="k">class</span> <span class="nc">MDTools</span><span class="p">:</span>
+  <span class="sd">&quot;&quot;&quot; Molecular Dynamics Tools for python</span>
+
+<span class="sd">  This class is designed to provide some standard molecular dynamics</span>
+<span class="sd">  tools to analyze trajectories.</span>
+
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">tmp</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="MDTools.DeltaR"><a class="viewcode-back" href="../RSoftTools.html#RSoftTools.MDTools.DeltaR">[docs]</a>  <span class="k">def</span> <span class="nf">DeltaR</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rf</span><span class="p">,</span> <span class="n">ri</span><span class="p">,</span> <span class="n">bb</span><span class="p">,</span> <span class="n">bc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Difference between two vectors or sets of vectors</span>
+<span class="sd">    </span>
+<span class="sd">    Calculates the difference between two positions rf and ri (rf-ri) </span>
+<span class="sd">    with respect to the box boundaries (bb) and the boundary conditions</span>
+<span class="sd">    (bc). The numpy arrays rf and ri can either be single particle</span>
+<span class="sd">    positions or sets of particle positions. Let d = dimension of the</span>
+<span class="sd">    space and N = number of vectors.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    K_test : int, optional</span>
-<span class="sd">      Positive integer of folds for nested K-folds cross-validation to </span>
-<span class="sd">      in test set. K_test = 5 is used by default.</span>
-<span class="sd">    Descriptions of other parameters can be found in Train function</span>
-
+<span class="sd">    rf : numpy array, either (d) or (N, d)</span>
+<span class="sd">      Final positions of particle(s) in d-dimensional space.</span>
+<span class="sd">    ri : numpy array, either (d) or (N, d)</span>
+<span class="sd">      Initial positions of particle(s) in d-dimensional space.</span>
+<span class="sd">    bb : numpy array, (d, 2)</span>
+<span class="sd">      Box boundaries of simulation or the experiment. For d=2, this</span>
+<span class="sd">      should be formatted [[low_x, high_x],[low_y, high_y]]. In d=3,</span>
+<span class="sd">      [[low_x, high_x],[low_y, high_y],[low_z, high_z]].</span>
+<span class="sd">    bc : numpy str array, (d)</span>
+<span class="sd">      Boundary conditions of the experiment or simulation. Each value</span>
+<span class="sd">      must be a single character string denoting the boundary condition</span>
+<span class="sd">      in each direction. &#39;p&#39; means periodic boundary conditions. &#39;s&#39; </span>
+<span class="sd">      means shrink wrapped bounday conditions. &#39;f&#39; means fixed boundary</span>
+<span class="sd">      conditions.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    numpy array (n_type,3)</span>
-<span class="sd">      Array that contains the test set accuracy, the test set accuracy</span>
-<span class="sd">      of rearranging particles, and the test set accuracy of </span>
-<span class="sd">      non-rearranging particles.</span>
+<span class="sd">    dr : numpy array, either (d) or (N, d)</span>
+<span class="sd">      The rf-ri given the box boundaries and boundary conditions.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># test acc array</span>
-    <span class="n">test_acc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">__n_type</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-    <span class="n">n_test_eg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">__n_type</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="c1"># Checks if all dimensions are matching</span>
+    <span class="n">dim_f</span> <span class="o">=</span> <span class="n">rf</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">dim_i</span> <span class="o">=</span> <span class="n">ri</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">dim_bc</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bc</span><span class="p">)</span>
+    <span class="n">dim_bb</span> <span class="o">=</span> <span class="n">bb</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">dim_f</span> <span class="o">!=</span> <span class="n">dim_i</span> <span class="ow">or</span> <span class="n">dim_f</span> <span class="o">!=</span> <span class="n">dim_bc</span> <span class="ow">or</span> <span class="n">dim_f</span> <span class="o">!=</span> <span class="n">dim_bb</span><span class="p">:</span>
+      <span class="n">str_</span> <span class="o">=</span> <span class="s1">&#39;ERROR: dimension mismatch for rf, ri, bc, and&#39;</span>
+      <span class="n">str_</span> <span class="o">+=</span> <span class="s1">&#39; bb.shape[0]&#39;</span>
+      <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">str_</span><span class="p">)</span>
 
-    <span class="c1"># Saving examples for real training later and shuffling examples</span>
-    <span class="k">for</span> <span class="n">idx_type</span><span class="p">,</span> <span class="n">type_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__types_unique</span><span class="p">):</span>
-      <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">training_R</span><span class="p">[</span><span class="n">idx_type</span><span class="p">])</span>
-      <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">training_NR</span><span class="p">[</span><span class="n">idx_type</span><span class="p">])</span>
-    <span class="n">training_R</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">training_R</span><span class="p">)</span>
-    <span class="n">training_NR</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">training_NR</span><span class="p">)</span>
+    <span class="c1"># Checks if rf and ri are vectors or vector of vectors</span>
+    <span class="n">arr_f_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rf</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">arr_i_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ri</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 
+    <span class="c1"># CASE: both rf and ri are vectors</span>
+    <span class="k">if</span> <span class="n">arr_f_dim</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">arr_i_dim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="n">dr</span> <span class="o">=</span> <span class="n">rf</span> <span class="o">-</span> <span class="n">ri</span>
+      <span class="n">idx_p_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">bc</span><span class="o">==</span><span class="s1">&#39;p&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="k">for</span> <span class="n">idx_p</span> <span class="ow">in</span> <span class="n">idx_p_arr</span><span class="p">:</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="n">bb</span><span class="p">[</span><span class="n">idx_p</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">bb</span><span class="p">[</span><span class="n">idx_p</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">dr</span><span class="p">[</span><span class="n">idx_p</span><span class="p">]</span><span class="o">&gt;</span><span class="n">L</span><span class="o">/</span><span class="mi">2</span><span class="p">:</span> <span class="n">dr</span><span class="p">[</span><span class="n">idx_p</span><span class="p">]</span> <span class="o">-=</span> <span class="n">L</span>
+        <span class="k">if</span> <span class="n">dr</span><span class="p">[</span><span class="n">idx_p</span><span class="p">]</span><span class="o">&lt;-</span><span class="n">L</span><span class="o">/</span><span class="mi">2</span><span class="p">:</span> <span class="n">dr</span><span class="p">[</span><span class="n">idx_p</span><span class="p">]</span> <span class="o">+=</span> <span class="n">L</span>
 
-    <span class="k">for</span> <span class="n">K_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">K_test</span><span class="p">):</span>
-      <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;K = &#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">K_</span><span class="p">))</span>
+    <span class="c1"># CASE: rf or ri are vectors of vectors</span>
+    <span class="k">elif</span> <span class="n">arr_f_dim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">arr_i_dim</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span>\
+          <span class="n">arr_f_dim</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">arr_i_dim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">or</span>\
+          <span class="n">arr_f_dim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">arr_i_dim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
 
-      <span class="c1"># Creates a testing an training set from original training set</span>
-      <span class="n">testing_R</span> <span class="o">=</span> <span class="p">[]</span>
-      <span class="n">testing_NR</span> <span class="o">=</span> <span class="p">[]</span>
-      <span class="k">for</span> <span class="n">idx_type</span><span class="p">,</span> <span class="n">type_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__types_unique</span><span class="p">):</span>
+      <span class="c1"># If rf and ri are vectors of vectors ensures they have</span>
+      <span class="c1"># the same number of particles, N</span>
+      <span class="k">if</span> <span class="n">arr_f_dim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">arr_i_dim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">rf</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ri</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+          <span class="n">str_</span> <span class="o">=</span> <span class="s1">&#39;ERROR: rf and ri don</span><span class="se">\&#39;</span><span class="s1">t have same number of &#39;</span>
+          <span class="n">str_</span> <span class="o">+=</span> <span class="s1">&#39;particles, N&#39;</span>
+          <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">str_</span><span class="p">)</span>
 
-        <span class="c1"># Finds rearrangements and non-rearrangements of given particle</span>
-        <span class="c1"># type</span>
-        <span class="n">Rs_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">training_R</span><span class="p">[</span><span class="n">idx_type</span><span class="p">]</span>
-        <span class="n">NRs_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">training_NR</span><span class="p">[</span><span class="n">idx_type</span><span class="p">]</span>
+      <span class="n">dr</span> <span class="o">=</span> <span class="n">rf</span> <span class="o">-</span> <span class="n">ri</span>
+      <span class="n">idx_p_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">bc</span><span class="o">==</span><span class="s1">&#39;p&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="k">for</span> <span class="n">idx_p</span> <span class="ow">in</span> <span class="n">idx_p_arr</span><span class="p">:</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="n">bb</span><span class="p">[</span><span class="n">idx_p</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">bb</span><span class="p">[</span><span class="n">idx_p</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">dr2</span> <span class="o">=</span> <span class="n">dr</span>
+        <span class="n">dr</span><span class="p">[</span><span class="n">dr</span><span class="p">[:,</span><span class="n">idx_p</span><span class="p">]</span><span class="o">&gt;</span><span class="n">L</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">idx_p</span><span class="p">]</span> <span class="o">-=</span> <span class="n">L</span>
+        <span class="n">dr</span><span class="p">[</span><span class="n">dr</span><span class="p">[:,</span><span class="n">idx_p</span><span class="p">]</span><span class="o">&lt;-</span><span class="n">L</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">idx_p</span><span class="p">]</span> <span class="o">+=</span> <span class="n">L</span>
 
-        <span class="c1"># Finds a test set of rearrangements</span>
-        <span class="n">Rs_type_test</span> <span class="o">=</span> <span class="n">Rs_type</span><span class="p">[</span><span class="n">K_</span><span class="p">::</span><span class="n">K_test</span><span class="p">]</span>
-        <span class="n">NRs_type_test</span> <span class="o">=</span> <span class="n">NRs_type</span><span class="p">[</span><span class="n">K_</span><span class="p">::</span><span class="n">K_test</span><span class="p">]</span>
-        <span class="n">n_test</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Rs_type_test</span><span class="p">),</span><span class="nb">len</span><span class="p">(</span><span class="n">NRs_type_test</span><span class="p">))</span>
-        <span class="n">Rs_type_test</span> <span class="o">=</span> <span class="n">Rs_type_test</span><span class="p">[:</span><span class="n">n_test</span><span class="p">]</span>
-        <span class="n">NRs_type_test</span> <span class="o">=</span> <span class="n">NRs_type_test</span><span class="p">[:</span><span class="n">n_test</span><span class="p">]</span>
-        <span class="n">testing_R</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Rs_type_test</span><span class="p">)</span>
-        <span class="n">testing_NR</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">NRs_type_test</span><span class="p">)</span>
+    <span class="c1"># CASE: rf or ri are neither vectors or vectors of vectors</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="s1">&#39;ERROR: rf or ri are not vectors or vectors of vectors&#39;</span><span class="p">)</span>
 
-        <span class="c1"># Deletes test set from training set</span>
-        <span class="n">Rs_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">Rs_type</span><span class="p">,</span> \
-              <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">K_</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">Rs_type</span><span class="p">),</span><span class="n">K_test</span><span class="p">)),</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">NRs_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">NRs_type</span><span class="p">,</span> \
-              <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">K_</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">NRs_type</span><span class="p">),</span><span class="n">K_test</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">training_R</span><span class="p">[</span><span class="n">idx_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">Rs_type</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">training_NR</span><span class="p">[</span><span class="n">idx_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">NRs_type</span>
+    <span class="k">return</span> <span class="n">dr</span></div>
+            
+<div class="viewcode-block" id="MDTools.GetNList"><a class="viewcode-back" href="../RSoftTools.html#RSoftTools.MDTools.GetNList">[docs]</a>  <span class="k">def</span> <span class="nf">GetNList</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos_t</span><span class="p">,</span> <span class="n">bb_t</span><span class="p">,</span> <span class="n">bc</span><span class="p">,</span> <span class="n">R_c</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Obtains a neighbor list for a set of particles</span>
 
-      <span class="c1"># Trains softness model using reduced training set</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">Train</span><span class="p">(</span><span class="n">n_eg</span><span class="o">=</span><span class="n">n_eg</span><span class="p">,</span> <span class="n">K</span><span class="o">=</span><span class="n">K</span><span class="p">,</span> \
-            <span class="n">C_parameters</span><span class="o">=</span><span class="n">C_parameters</span><span class="p">,</span> <span class="n">norm_SF</span><span class="o">=</span><span class="n">norm_SF</span><span class="p">,</span> \
-            <span class="n">norm_plane</span><span class="o">=</span><span class="n">norm_plane</span><span class="p">,</span> <span class="n">tol_</span><span class="o">=</span><span class="n">tol_</span><span class="p">,</span> \
-            <span class="n">max_iter_</span><span class="o">=</span><span class="n">max_iter_</span><span class="p">)</span>
-
-      <span class="c1"># Tests new plane against test set</span>
-      <span class="k">for</span> <span class="n">idx_type</span><span class="p">,</span> <span class="n">type_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__types_unique</span><span class="p">):</span>
-
-        <span class="c1"># Finds number of soft rearrangements and hard </span>
-        <span class="c1"># non-rearrangements</span>
-        <span class="n">soft_Rs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetSoft</span><span class="p">(</span><span class="n">testing_R</span><span class="p">[</span><span class="n">idx_type</span><span class="p">])</span>
-        <span class="n">soft_NRs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetSoft</span><span class="p">(</span><span class="n">testing_NR</span><span class="p">[</span><span class="n">idx_type</span><span class="p">])</span>
-        <span class="n">nRs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">soft_Rs</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="n">nNRs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">soft_NRs</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
-
-        <span class="c1"># Calculates # of correctly classified particles</span>
-        <span class="n">test_acc</span><span class="p">[</span><span class="n">idx_type</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">nRs</span><span class="o">+</span><span class="n">nNRs</span>
-        <span class="n">n_test_eg</span><span class="p">[</span><span class="n">idx_type</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">soft_Rs</span><span class="p">)</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">soft_NRs</span><span class="p">)</span>
-        <span class="n">test_acc</span><span class="p">[</span><span class="n">idx_type</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">nRs</span>
-        <span class="n">n_test_eg</span><span class="p">[</span><span class="n">idx_type</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">soft_Rs</span><span class="p">)</span>
-        <span class="n">test_acc</span><span class="p">[</span><span class="n">idx_type</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="n">nNRs</span>
-        <span class="n">n_test_eg</span><span class="p">[</span><span class="n">idx_type</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">soft_NRs</span><span class="p">)</span>
-
-      <span class="c1"># Returns self.training_R and self.training_NR to original state</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">training_R</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">training_R</span><span class="p">)</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">training_NR</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">training_NR</span><span class="p">)</span>
-
-    <span class="c1"># Calculates test set accuracy</span>
-    <span class="n">test_acc</span> <span class="o">=</span> <span class="n">test_acc</span> <span class="o">/</span> <span class="n">n_test_eg</span>
-
-    <span class="k">return</span> <span class="n">test_acc</span></div>
-
-<div class="viewcode-block" id="RSoft.GetSoft"><a class="viewcode-back" href="../RSoftTools.html#RSoftTools.RSoft.GetSoft">[docs]</a>  <span class="k">def</span> <span class="nf">GetSoft</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">particles</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Gets softness of a set of particles</span>
-
-<span class="sd">    Finds the softness of a set of particles, i.e. either an array of </span>
-<span class="sd">    particles frames and labels or all particles in a given frame.</span>
+<span class="sd">    Finds all of the neighbors within a cuttoff distance (R_c) for a </span>
+<span class="sd">    set of particles (pos_t) given a set of box boundaries (bb_t), and</span>
+<span class="sd">    a set of boundary conditions.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    particles : numpy array (n_eg, 2)</span>
-<span class="sd">      Numpy array where each row is a particle, the first column </span>
-<span class="sd">      represents the particle frame, and the second column is the </span>
-<span class="sd">      particle id or an int describing the frame of which to get all</span>
-<span class="sd">      particle softnesses</span>
+<span class="sd">    pos_t : numpy array, (n_p, d)</span>
+<span class="sd">      Set of n_p particle positions in d-dimensional space</span>
+<span class="sd">    bb_t : numpy array, (d, 2)</span>
+<span class="sd">      Box boundaries of simulation or the experiment. For d=2, this</span>
+<span class="sd">      should be formatted [[low_x, high_x],[low_y, high_y]]. In d=3,</span>
+<span class="sd">      [[low_x, high_x],[low_y, high_y],[low_z, high_z]].</span>
+<span class="sd">    bc : numpy str array, (d)</span>
+<span class="sd">      Boundary conditions of the experiment or simulation. Each value</span>
+<span class="sd">      must be a single character string denoting the boundary condition</span>
+<span class="sd">      in each direction. &#39;p&#39; means periodic boundary conditions. &#39;s&#39; </span>
+<span class="sd">      means shrink wrapped bounday conditions. &#39;f&#39; means fixed boundary</span>
+<span class="sd">      conditions.</span>
+<span class="sd">    R_c : float</span>
+<span class="sd">      Cutoff radius of the simulation.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    numpy array</span>
-<span class="sd">      Numpy array in which each value is a softness value of the</span>
-<span class="sd">      particles given.</span>
+<span class="sd">    n_list : python array, (n_p)</span>
+<span class="sd">      Python list in which n_list[i] is a numpy array of all neighbors</span>
+<span class="sd">      of particle i from pos_t. </span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__openSFI</span><span class="p">:</span>
-      <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR: Must use OpenSFI before GetSoft.&#39;</span><span class="p">)</span>
-      <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__containsParticles</span><span class="p">:</span>
-      <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR: RSoftSF file must contain particles to use this&#39;</span><span class="p">)</span>
-      <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;      file.&#39;</span><span class="p">)</span>
-      <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># Initializes variables</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__R_c_2</span> <span class="o">=</span> <span class="n">R_c</span><span class="o">*</span><span class="n">R_c</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__n_p</span> <span class="o">=</span> <span class="n">pos_t</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__d</span> <span class="o">=</span> <span class="n">pos_t</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__n_list_t</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__n_p</span><span class="p">)]</span>
+    <span class="n">cell_delta_arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__InitializeCellDeltaArr</span><span class="p">()</span>
 
-    <span class="c1"># Obtains structure functions</span>
-    <span class="n">SFs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ParticlesToSFs</span><span class="p">(</span><span class="n">particles</span><span class="p">)</span>
+    <span class="c1"># Bins particles into cells</span>
+    <span class="n">particles_in_cell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__BinParticlesIntoCells</span><span class="p">(</span><span class="n">pos_t</span><span class="p">,</span> <span class="n">bb_t</span><span class="p">,</span> <span class="n">R_c</span><span class="p">)</span>
+    <span class="n">n_cells_tot</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">particles_in_cell</span><span class="p">)</span>
 
+    <span class="k">for</span> <span class="n">cell_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cells_tot</span><span class="p">):</span>
+      <span class="c1"># Initializes shift</span>
+      <span class="n">shift</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__d</span><span class="p">)</span>
 
-    <span class="n">soft_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">particles</span><span class="p">))</span>
-    <span class="k">for</span> <span class="n">idx_particle</span><span class="p">,</span> <span class="n">particle</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">particles</span><span class="p">):</span>
+      <span class="c1"># Adds neighbors from same cell</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">__AddNeighbors</span><span class="p">(</span><span class="n">pos_t</span><span class="p">,</span> <span class="n">particles_in_cell</span><span class="p">,</span> <span class="n">R_c</span><span class="p">,</span> <span class="n">shift</span><span class="p">,</span>\
+            <span class="n">cell_idx</span><span class="p">,</span> <span class="n">cell_idx</span><span class="p">)</span>
+      <span class="n">cell_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Unstack</span><span class="p">(</span><span class="n">cell_idx</span><span class="p">)</span>
 
-      <span class="n">f</span> <span class="o">=</span> <span class="n">particle</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-      <span class="n">p</span> <span class="o">=</span> <span class="n">particle</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-      <span class="n">type_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__NcIO_dyn</span><span class="o">.</span><span class="n">GetDataCol</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="s1">&#39;type&#39;</span><span class="p">)[</span><span class="n">p</span><span class="p">]</span>
-      <span class="n">idx_type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">type_</span><span class="o">==</span><span class="bp">self</span><span class="o">.</span><span class="n">__types_unique</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="c1"># Adds neighbors from neighboring cells</span>
+      <span class="k">for</span> <span class="n">cell_delta</span> <span class="ow">in</span> <span class="n">cell_delta_arr</span><span class="p">:</span>
 
-      <span class="c1"># Loads plane (a) and intercept (b)</span>
-      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__containsRadial</span><span class="p">:</span>
-        <span class="n">a_rad</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">radial_plane</span><span class="p">[</span><span class="n">idx_type</span><span class="p">]</span>
-      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__containsAngular</span><span class="p">:</span>
-        <span class="n">a_ang</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">angular_plane</span><span class="p">[</span><span class="n">idx_type</span><span class="p">]</span>
+        <span class="c1"># checks if cells are neighbors</span>
+        <span class="n">are_neighbors</span><span class="p">,</span> <span class="n">neigh_cell_pos</span><span class="p">,</span> <span class="n">shift</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__AddCellPos</span><span class="p">(</span>\
+                <span class="n">cell_pos</span><span class="p">,</span> <span class="n">cell_delta</span><span class="p">,</span> <span class="n">bb_t</span><span class="p">,</span> <span class="n">bc</span><span class="p">)</span>
+
+        <span class="c1"># if cells are neighbors, adds particles to neighbor list</span>
+        <span class="k">if</span> <span class="n">are_neighbors</span><span class="p">:</span>
+          <span class="n">neigh_cell_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Stack</span><span class="p">(</span><span class="n">neigh_cell_pos</span><span class="p">)</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">__AddNeighbors</span><span class="p">(</span><span class="n">pos_t</span><span class="p">,</span> <span class="n">particles_in_cell</span><span class="p">,</span> <span class="n">R_c</span><span class="p">,</span> <span class="n">shift</span><span class="p">,</span>
+                <span class="n">cell_idx</span><span class="p">,</span> <span class="n">neigh_cell_idx</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__n_list_t</span></div>
+
+  <span class="k">def</span> <span class="nf">__InitializeCellDeltaArr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># determines list of neighoring cells</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__d</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="n">cell_delta_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>\
+            <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]])</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">cell_delta_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>\
+            <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>\
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>\
+            <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>\
+            <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>\
+            <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]])</span>
+    <span class="k">return</span> <span class="n">cell_delta_arr</span>
+
+  <span class="k">def</span> <span class="nf">__BinParticlesIntoCells</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos_t</span><span class="p">,</span> <span class="n">bb_t</span><span class="p">,</span> <span class="n">R_c</span><span class="p">):</span>
+
+    <span class="c1"># Finds number of cells in each dimension and cell lengths</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="p">(</span><span class="n">bb_t</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">bb_t</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__n_cells</span> <span class="o">=</span> <span class="p">(</span><span class="n">L</span><span class="o">/</span><span class="n">R_c</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__n_cells</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__n_cells</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__cell_lengths</span> <span class="o">=</span> <span class="n">L</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">__n_cells</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__n_cells_tot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__n_cells</span><span class="p">)</span>
+
+    <span class="c1"># Place particles in cells</span>
+    <span class="n">particles_in_cell</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">cells</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__n_cells_tot</span><span class="p">)]</span>
+    <span class="n">cell_pos</span> <span class="o">=</span> <span class="p">((</span><span class="n">pos_t</span><span class="o">-</span><span class="n">bb_t</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">__cell_lengths</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">cell_idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__Stack</span><span class="p">(</span><span class="n">cell_pos</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">pp</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">pos_t</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+      <span class="n">particles_in_cell</span><span class="p">[</span><span class="n">cell_idx</span><span class="p">[</span><span class="n">pp</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">particles_in_cell</span>
+
+  <span class="k">def</span> <span class="nf">__Stack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cell_pos</span><span class="p">):</span>
+    <span class="c1"># CASE: cell_pos is a vector</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cell_pos</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__d</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
+        <span class="n">n_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__n_cells</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">cell_idx</span> <span class="o">=</span> <span class="n">cell_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">cell_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">n_x</span>
+      <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">__d</span><span class="o">==</span><span class="mi">3</span><span class="p">:</span>
+        <span class="n">n_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__n_cells</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">n_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__n_cells</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">cell_idx</span> <span class="o">=</span> <span class="n">cell_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="p">(</span><span class="n">cell_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">cell_pos</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">n_x</span><span class="p">)</span><span class="o">*</span><span class="n">n_y</span>
+
+    <span class="c1"># CASE cell_pos is a vector of vectors</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">cell_pos</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__d</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
+        <span class="n">n_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__n_cells</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">cell_idx</span> <span class="o">=</span> <span class="n">cell_pos</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">cell_pos</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">n_x</span>
+      <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">__d</span><span class="o">==</span><span class="mi">3</span><span class="p">:</span>
+        <span class="n">n_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__n_cells</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">n_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__n_cells</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">cell_idx</span> <span class="o">=</span> <span class="n">cell_pos</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="p">(</span><span class="n">cell_pos</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">cell_pos</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">n_x</span><span class="p">)</span><span class="o">*</span><span class="n">n_y</span>
+
+    <span class="k">return</span> <span class="n">cell_idx</span>
+
+  <span class="k">def</span> <span class="nf">__Unstack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cell_idx</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__d</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
+      <span class="n">n_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__n_cells</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="n">y</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cell_idx</span><span class="o">/</span><span class="n">n_x</span><span class="p">)</span>
+      <span class="n">x</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cell_idx</span><span class="o">-</span><span class="n">y</span><span class="o">*</span><span class="n">n_x</span><span class="p">)</span>
+      <span class="n">cell_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">__d</span><span class="o">==</span><span class="mi">3</span><span class="p">:</span>
+      <span class="n">n_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__n_cells</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="n">n_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__n_cells</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+      <span class="n">z</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cell_idx</span><span class="o">/</span><span class="p">(</span><span class="n">n_x</span><span class="o">*</span><span class="n">n_y</span><span class="p">))</span>
+      <span class="n">y</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">cell_idx</span><span class="o">-</span><span class="n">z</span><span class="o">*</span><span class="n">n_x</span><span class="o">*</span><span class="n">n_y</span><span class="p">)</span><span class="o">/</span><span class="n">n_x</span><span class="p">)</span>
+      <span class="n">x</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">cell_idx</span><span class="o">-</span><span class="n">z</span><span class="o">*</span><span class="n">n_x</span><span class="o">*</span><span class="n">n_y</span><span class="o">-</span><span class="n">y</span><span class="o">*</span><span class="n">n_x</span><span class="p">))</span>
+      <span class="n">cell_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">cell_pos</span>
+
+  <span class="k">def</span> <span class="nf">__AddNeighbors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos_t</span><span class="p">,</span> <span class="n">particles_in_cell</span><span class="p">,</span> <span class="n">R_c</span><span class="p">,</span> <span class="n">shift</span><span class="p">,</span>\
+        <span class="n">cell_idx</span><span class="p">,</span> <span class="n">neigh_cell_idx</span><span class="p">):</span>
+    <span class="n">n_p_cell</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">particles_in_cell</span><span class="p">[</span><span class="n">cell_idx</span><span class="p">])</span>
+    <span class="n">n_p_neigh_cell</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">particles_in_cell</span><span class="p">[</span><span class="n">neigh_cell_idx</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">p_cell</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_p_cell</span><span class="p">):</span>
+      <span class="c1"># Particle index</span>
+      <span class="n">p</span> <span class="o">=</span> <span class="n">particles_in_cell</span><span class="p">[</span><span class="n">cell_idx</span><span class="p">][</span><span class="n">p_cell</span><span class="p">];</span>
+
+      <span class="c1"># Ensures no double counting</span>
+      <span class="k">if</span><span class="p">(</span><span class="n">cell_idx</span><span class="o">==</span><span class="n">neigh_cell_idx</span><span class="p">):</span>
+        <span class="n">n_p_neigh_cell</span> <span class="o">=</span> <span class="n">p_cell</span>
+
+      <span class="k">for</span> <span class="n">p_neigh_cell</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_p_neigh_cell</span><span class="p">):</span>
+        <span class="c1"># Neighboring particle index</span>
+        <span class="n">p_neigh</span> <span class="o">=</span> <span class="n">particles_in_cell</span><span class="p">[</span><span class="n">neigh_cell_idx</span><span class="p">][</span><span class="n">p_neigh_cell</span><span class="p">]</span>
+
+        <span class="n">r_vec</span> <span class="o">=</span> <span class="n">pos_t</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">-</span><span class="p">(</span><span class="n">pos_t</span><span class="p">[</span><span class="n">p_neigh</span><span class="p">]</span><span class="o">+</span><span class="n">shift</span><span class="p">)</span>
+        <span class="n">sq_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">r_vec</span><span class="o">*</span><span class="n">r_vec</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sq_sum</span><span class="o">&lt;</span><span class="bp">self</span><span class="o">.</span><span class="n">__R_c_2</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">__n_list_t</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p_neigh</span><span class="p">)</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">__n_list_t</span><span class="p">[</span><span class="n">p_neigh</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">__AddCellPos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cell_pos</span><span class="p">,</span> <span class="n">cell_delta</span><span class="p">,</span> <span class="n">bb_t</span><span class="p">,</span> <span class="n">bc</span><span class="p">):</span>
+    <span class="n">neigh_cell_pos</span> <span class="o">=</span> <span class="n">cell_pos</span> <span class="o">+</span> <span class="n">cell_delta</span>
+    <span class="n">shift</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__d</span><span class="p">)</span>
+    <span class="n">are_neighbors</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">for</span> <span class="n">dd</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__d</span><span class="p">):</span> 
+      <span class="k">if</span> <span class="n">bc</span><span class="p">[</span><span class="n">dd</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;p&#39;</span><span class="p">:</span> 
+        <span class="k">if</span> <span class="n">neigh_cell_pos</span><span class="p">[</span><span class="n">dd</span><span class="p">]</span><span class="o">==-</span><span class="mi">1</span><span class="p">:</span>
+          <span class="n">neigh_cell_pos</span><span class="p">[</span><span class="n">dd</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__n_cells</span><span class="p">[</span><span class="n">dd</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span>
+          <span class="n">shift</span><span class="p">[</span><span class="n">dd</span><span class="p">]</span> <span class="o">=</span> <span class="n">bb_t</span><span class="p">[</span><span class="n">dd</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">bb_t</span><span class="p">[</span><span class="n">dd</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">neigh_cell_pos</span><span class="p">[</span><span class="n">dd</span><span class="p">]</span><span class="o">==</span><span class="bp">self</span><span class="o">.</span><span class="n">__n_cells</span><span class="p">[</span><span class="n">dd</span><span class="p">]:</span>
+          <span class="n">neigh_cell_pos</span><span class="p">[</span><span class="n">dd</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+          <span class="n">shift</span><span class="p">[</span><span class="n">dd</span><span class="p">]</span> <span class="o">=</span> <span class="n">bb_t</span><span class="p">[</span><span class="n">dd</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">bb_t</span><span class="p">[</span><span class="n">dd</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
       <span class="k">else</span><span class="p">:</span>
-        <span class="n">a_ang</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
-      <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">a_rad</span><span class="p">,</span><span class="n">a_ang</span><span class="p">))</span>
-      <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">intercept</span><span class="p">[</span><span class="n">idx_type</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">neigh_cell_pos</span><span class="p">[</span><span class="n">dd</span><span class="p">]</span><span class="o">==-</span><span class="mi">1</span> <span class="ow">or</span> \
+              <span class="n">neigh_cell_pos</span><span class="p">[</span><span class="n">dd</span><span class="p">]</span><span class="o">==</span><span class="bp">self</span><span class="o">.</span><span class="n">__n_cells</span><span class="p">[</span><span class="n">dd</span><span class="p">]:</span>
+          <span class="n">are_neighbors</span> <span class="o">=</span> <span class="kc">False</span>
 
-      <span class="c1"># Calculates softness</span>
-      <span class="n">soft_arr</span><span class="p">[</span><span class="n">idx_particle</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">SFs</span><span class="p">[</span><span class="n">idx_particle</span><span class="p">])</span><span class="o">+</span><span class="n">b</span>
-
-    <span class="k">return</span> <span class="n">soft_arr</span></div></div>
-
-
+    <span class="k">return</span> <span class="p">(</span><span class="n">are_neighbors</span><span class="p">,</span> <span class="n">neigh_cell_pos</span><span class="p">,</span> <span class="n">shift</span><span class="p">)</span></div>
 
 
 
