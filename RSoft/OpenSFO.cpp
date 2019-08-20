@@ -3,11 +3,14 @@
 #include <cstdlib>
 #include <string.h>
 
-// Opens RSoftSF file for output
-// Parameters:
-//   nc_file: std::string containing netcdf file name to output to
-// Outputs:
-//   None
+/**********************************************************************
+ * Opens RSoftSF file for output
+ *
+ * Opens RSoftSF file for output. Typically used if one wants to store
+ * particles in an RSoftSF file. 
+ *
+ * @param[in] nc_file RSoftSF (netcdf) file name to output
+ *********************************************************************/
 void RSoft::OpenSFO(std::string nc_file)
 {
   // Error messages

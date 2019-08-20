@@ -1,6 +1,7 @@
 RSoft/CalculateAngularSFs_p.d: ../RSoft/CalculateAngularSFs_p.cpp \
- ../RSoft/RSoft.hpp ../RSoft/../MDTools/MDTools.hpp \
- ../RSoft/../MDTools/../Eigen/Dense ../RSoft/../MDTools/../Eigen/Core \
+ ../RSoft/RSoft.hpp /home/ivancicr/anaconda3/envs/RSoft/include/netcdf.h \
+ ../RSoft/../MDTools/MDTools.hpp ../RSoft/../MDTools/../Eigen/Dense \
+ ../RSoft/../MDTools/../Eigen/Core \
  ../RSoft/../MDTools/../Eigen/src/Core/util/DisableStupidWarnings.h \
  ../RSoft/../MDTools/../Eigen/src/Core/util/Macros.h \
  ../RSoft/../MDTools/../Eigen/src/Core/util/MKL_support.h \
@@ -155,6 +156,8 @@ RSoft/CalculateAngularSFs_p.d: ../RSoft/CalculateAngularSFs_p.cpp \
  ../RSoft/../MDTools/../Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h
 
 ../RSoft/RSoft.hpp:
+
+/home/ivancicr/anaconda3/envs/RSoft/include/netcdf.h:
 
 ../RSoft/../MDTools/MDTools.hpp:
 

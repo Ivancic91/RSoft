@@ -3,11 +3,13 @@
 #include <cstdlib>
 #include <string.h>
 
-// Imports RSoftSF file
-// Parameters:
-//   nc_file: std::string containing netcdf file name to grab input
-// Outputs:
-//   None
+/**********************************************************************
+ * Opens RSoftSF file for input
+ *
+ * Opens RSoftSF file for input.
+ *
+ * @param[in] nc_file RSoftSF (netcdf) file name to input
+ **********************************************************************/
 void RSoft::OpenSFI(std::string nc_file)
 {
 

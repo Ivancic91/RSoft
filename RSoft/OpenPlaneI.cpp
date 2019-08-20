@@ -8,6 +8,14 @@
 //   nc_file: std::string containing netcdf file name to grab input
 // Outputs:
 //   None
+/**********************************************************************
+ * Opens RSoftPlane file for input
+ *
+ * Opens RSoftPlane file for input. Typically used if one wants to
+ * calculcate softness of some dataset.
+ *
+ * @param[in] nc_file RSoftPlane (netcdf) file to input
+ ********************************************************************/
 void RSoft::OpenPlaneI(std::string nc_file)
 {
  

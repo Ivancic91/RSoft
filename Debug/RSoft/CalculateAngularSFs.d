@@ -1,4 +1,6 @@
 RSoft/CalculateAngularSFs.d: ../RSoft/CalculateAngularSFs.cpp \
- ../RSoft/RSoft.hpp
+ ../RSoft/RSoft.hpp /home/ivancicr/anaconda3/envs/RSoft/include/netcdf.h
 
 ../RSoft/RSoft.hpp:
+
+/home/ivancicr/anaconda3/envs/RSoft/include/netcdf.h:

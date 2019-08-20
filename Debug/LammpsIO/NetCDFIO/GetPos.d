@@ -1,5 +1,6 @@
 LammpsIO/NetCDFIO/GetPos.d: ../LammpsIO/NetCDFIO/GetPos.cpp \
  ../LammpsIO/NetCDFIO/NetCDFIO.hpp \
+ /home/ivancicr/anaconda3/envs/RSoft/include/netcdf.h \
  ../LammpsIO/NetCDFIO/../../VectorTools/VectorTools.hpp \
  ../LammpsIO/NetCDFIO/../../VectorTools/../Eigen/Dense \
  ../LammpsIO/NetCDFIO/../../VectorTools/../Eigen/Core \
@@ -158,6 +159,8 @@ LammpsIO/NetCDFIO/GetPos.d: ../LammpsIO/NetCDFIO/GetPos.cpp \
  ../LammpsIO/NetCDFIO/../../VectorTools/../Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h
 
 ../LammpsIO/NetCDFIO/NetCDFIO.hpp:
+
+/home/ivancicr/anaconda3/envs/RSoft/include/netcdf.h:
 
 ../LammpsIO/NetCDFIO/../../VectorTools/VectorTools.hpp:
 

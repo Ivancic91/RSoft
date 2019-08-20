@@ -1,3 +1,6 @@
-RSoft/OpenSFO.d: ../RSoft/OpenSFO.cpp ../RSoft/RSoft.hpp
+RSoft/OpenSFO.d: ../RSoft/OpenSFO.cpp ../RSoft/RSoft.hpp \
+ /home/ivancicr/anaconda3/envs/RSoft/include/netcdf.h
 
 ../RSoft/RSoft.hpp:
+
+/home/ivancicr/anaconda3/envs/RSoft/include/netcdf.h:

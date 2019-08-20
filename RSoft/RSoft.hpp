@@ -112,10 +112,6 @@ private:
       bool IIeqJJ,
       bool IIeqKK,
       bool JJeqKK);
-  //void CalculateAngularSF_p_n_sn(int pp, int nn, int sn);
-                                 // Calculates angular SF between
-                                 //     particle pp and neighbors
-                                 //     nn and sn
   void CalculateNListRList();    // Calculates neighbor and
                                  //     corresponding R_ij list
   double GetRcRadial();          // Gets cutoff of radial SFs

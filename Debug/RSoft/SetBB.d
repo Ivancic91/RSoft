@@ -1,3 +1,6 @@
-RSoft/SetBB.d: ../RSoft/SetBB.cpp ../RSoft/RSoft.hpp
+RSoft/SetBB.d: ../RSoft/SetBB.cpp ../RSoft/RSoft.hpp \
+ /home/ivancicr/anaconda3/envs/RSoft/include/netcdf.h
 
 ../RSoft/RSoft.hpp:
+
+/home/ivancicr/anaconda3/envs/RSoft/include/netcdf.h:
