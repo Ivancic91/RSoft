@@ -1,0 +1,19 @@
+#!/bin/sh
+#SBATCH --job-name="run_KA"
+#SBATCH --nodes=1 # number of nodes
+#SBATCH --ntasks-per-node=4 # number of cores
+#SBATCH --mem=4G # memory pool for all cores
+#SBATCH -t 24:00:00 # time (HH:MM:SS)
+#SBATCH --output="KA.o.%j" #STDOUT
+#SBATCH --error="KA.e.%j" # STDERR
+#SBATCH --export=ALL
+
+# Loads modules
+module load gcc/openmpi/default
+module load gcc/lammps/default
+
+# Runs commands
+time mpirun -np 4 lmp_mpi -in input.therm > log.therm
+time mpirun -np 4 lmp_mpi -in input.lowerT > log.lowerT
+time mpirun -np 4 lmp_mpi -in input.run > log.run
+

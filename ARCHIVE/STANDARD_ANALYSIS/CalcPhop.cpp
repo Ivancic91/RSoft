@@ -67,7 +67,6 @@ int main(int argc, char* argv[])
       bc.push_back(str_bc);
     }   
     str_write = argv[6];
-
   }
 
   // Gets number of frames and particles
@@ -75,7 +74,7 @@ int main(int argc, char* argv[])
   nc_read.OpenI(str_read);
   n_f = nc_read.NumFrames();
   n_p = nc_read.NumParts();
-
+  
   // Gets number of frames and particles
   NetCDFIO nc_write;
   nc_write.OpenO(str_write);
@@ -84,6 +83,7 @@ int main(int argc, char* argv[])
   for(int f=0; f<tR+1; f++)
   {
     nc_read.GetPos(f, pos_t);
+    nc_read.GetBB(f, bb_t);
     tool.PostProcess(pos_t, bb_t, bc);
     pos.push_back(pos_t);
   }
@@ -137,5 +137,5 @@ int main(int argc, char* argv[])
   nc_write.CloseO();
   std::cout << "****Success!! :)\n";
   return 0;
-
+  
 }
