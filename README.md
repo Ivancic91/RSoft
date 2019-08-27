@@ -158,7 +158,7 @@ was taken from Schoenholz et. al. Nat. Phys. 2016.
 
 I highly recommend viewing your results using OVITO to visualize your 
 results here: https://www.ovito.org. It may be used to color particles
-by their  <a href="https://www.codecogs.com/eqnedit.php?latex=p_{hop}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?p_{hop}" title="p_{hop}" /    ></a>
+by their <a href="https://www.codecogs.com/eqnedit.php?latex=p_{hop}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?p_{hop}" title="p_{hop}" /></a>
 values to ensure results are reasonable.
 
 **(Step 3)** Generate an RSoftSF file *with* particles evaluated.
