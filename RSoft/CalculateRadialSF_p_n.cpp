@@ -29,6 +29,7 @@ void RSoft::CalculateRadialSF_p_n(
 
   // Initializes particle j id
   j = n_list_radial[i][n_j];
+  //std::cout << i << "," << j << "," << type[i] << "," << type[j] << "\n";
 
   // Adds nothing if j <= i so that no double counting occurs
   if(j > i)

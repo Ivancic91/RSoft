@@ -10,16 +10,15 @@ import time
 # Initializes RSoft object
 rs = RSoft()
 
-start = time.time()
 # Opens files for input and output
-name_rSoftSF = '/opt/share/entaoy/Phop_SF/out.SF.nc'
-name_MD = 'Phop_tmp.nc'
+name_rSoftSF = 'phop.SF.nc'
+name_MD = 'phop.nc'
 name_Dynamics = 'phop'
-name_plane = 'out.plane.nc'
-r_cut = np.array([0.2])      # phop cutoff for rearrangements (r's)
-nr_frames = np.array([10])   # number of frames below non-r threshold
-nr_cut = np.array([0.05])    # non-r threshold
-n_train = 5000               # number of rearrangingtraining examples
+name_plane = 'KA.plane.nc'       
+r_cut = np.array([0.2,0.2])      # phop cutoff for rearrangements (r's)
+nr_frames = np.array([500,500])  # number of frames below non-r threshold
+nr_cut = np.array([0.05,0.05])   # non-r threshold for each type
+#n_train = np.array([1000,1000]) # number of training examples
 norm_SF_ = True              # normalize structure functions before fit
 norm_plane_ = True           # normalize plane s.t. std(S) = 1
 
@@ -34,9 +33,16 @@ rs.SelectTrainingSet(
       non_rearrangement_frames=nr_frames,
       non_rearrangement_cutoff=nr_cut)
 
+# Prints the maximum number of training examples in rearranging
+# and non-rearranging training sets
+print('Number of examples for each type in rearranging set')
+print([len(tR) for tR in rs.training_R])
+print('Number of examples for each type for non-rearranging set')
+print([len(tNR) for tNR in rs.training_NR])
+
 # Trains plane
 rs.Train(
-      n_eg = np.array([n_train]),
+      #n_eg = n_train,
       norm_SF = norm_SF_,
       norm_plane = norm_plane_)
 
@@ -47,5 +53,3 @@ rs.WritePlane()
 rs.CloseSFI()
 rs.CloseDynamicsI()
 rs.ClosePlaneO()
-end = time.time()
-print((end-start))

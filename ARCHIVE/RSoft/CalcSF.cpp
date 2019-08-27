@@ -78,10 +78,12 @@ int main(int argc, char* argv[])
     // Gets positions and box boundaries
     nc_read.GetPos(f, pos_t);
     nc_read.GetBB(f, bb_t);
+    nc_read.GetDataCol(f, "type", type_t);
 
     // Sets positions, box boundaries, and boundary conditions
     rs.SetPos(pos_t);
     rs.SetBB(bb_t);
+    rs.SetType(type_t);
     rs.SetBC(bc);
 
     // Writes structure functions to output file

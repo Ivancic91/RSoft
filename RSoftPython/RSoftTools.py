@@ -18,6 +18,8 @@ from netCDF4 import Dataset
 from LammpsIO import NetCDFIO
 import sklearn as skl
 from sklearn import svm
+from math import sqrt
+from math import log
 
 class RSoft:
   """RSoft package for python.
@@ -28,8 +30,6 @@ class RSoft:
   Attributes
   ----------
   etol_radial : float
-    \epsilon_R
-
     Radial error tolerance (if available). Can obtain after OpenSFI.
   mus : numpy array (n_SF_rad)
     Mu structure function parameters (if available). Can obtain after
@@ -81,6 +81,8 @@ class RSoft:
     self.__containsParticles = False
     self.__n_SF_ang = 0
     self.__n_SF_rad = 0
+    self.radial_Xs = np.array([])
+    self.angular_Xs = np.array([])
 
     # Checks if public functions have been used
     self.__openSFI = False
@@ -106,7 +108,7 @@ class RSoft:
     Parameters
     ----------
     nc_file_name : str
-      Name of RSoftSF file you wish to write to.
+      Name of RSoftPlane file you wish to write to.
 
     """
     # Checks errors
@@ -117,7 +119,7 @@ class RSoft:
       print('ERROR: Cannot use OpenPlaneO and OpenSFO')
       sys.exit(-1)
 
-    # Opens RSoftSF and initializes values
+    # Opens RSoftPlane and initializes values
     self.__nc_RSoft_O = Dataset(nc_file_name, 'w', format='NETCDF4')
     self.__nc_RSoft_O.Conventions = 'RSoftSF'
     self.__nc_RSoft_O.ConventionVersion = '1.0'
@@ -461,7 +463,8 @@ class RSoft:
 
       # Normalizes plane so that sofness has an std of 1
       if norm_plane:
-        a = np.dot(plane,np.dot(self._cov_SF,plane))
+        cov = self._cov_SF[idx_type_SF][:,idx_type_SF]
+        a = np.dot(plane,np.dot(cov,plane))
         plane /= np.sqrt(a)
         intercept /= np.sqrt(a)
 
@@ -529,9 +532,9 @@ class RSoft:
         # mean. We do not use nanmean function in case number of 
         # particles changes between frames
         n_parts += np.count_nonzero(~np.isnan(SF[:,0]))
-        mean_SF += np.nansum(SF,axis=0)
+        mean_SF[idx_type_SF] += np.nansum(SF[:,idx_type_SF],axis=0)
         cov_SF[idx_type_SF[:,None],idx_type_SF[None,:]] += \
-              np.dot(SF.T,SF)
+              np.dot(SF[:,idx_type_SF].T,SF[:,idx_type_SF])
       
       # Calculates mean and covariance
       mean_SF[idx_type_SF] /= float(n_parts)
@@ -768,8 +771,6 @@ class RSoft:
       self.__nc_RSoft_O.createDimension('frame', 0)
       self.__nc_RSoft_O.createDimension('atom', SF.shape[0])
     if not self.__setRadial:
-      self.__nc_RSoft_O.createDimension('radial_structure_functions',\
-            SF.shape[1])
       self.__nc_RSoft_O_radial_structures = \
             self.__nc_RSoft_O.createVariable('radial_structures', \
             'f4', ('frame','atom','radial_structure_functions'))
@@ -800,8 +801,6 @@ class RSoft:
       self.__nc_RSoft_O.createDimension('frame', 0)
       self.__nc_RSoft_O.createDimension('atom', SF.shape[0])
     if not self.__setAngular:
-      self.__nc_RSoft_O.createDimension('radial_structure_functions',\
-            SF.shape[1])
       self.__nc_RSoft_O_angular_structures = \
             self.__nc_RSoft_O.createVariable('angular_structures', \
             'f4', ('frame','atom','angular_structure_functions'))
@@ -812,299 +811,376 @@ class RSoft:
     # Marks as run
     self.__setAngular = True
 
+  def CloseSFO(self):
+    """ Closes RSoftSFO file
+    """
+    self.__nc_RSoft_O.close()
+
   def CloseSFI(self):
-    """ Closes input of RSoftSF file
+    """ Closes RSoftSFI file
     """
     self.__nc_RSoft_I.close()
 
-  def CloseSFO(self):
-    """ Closes output of RSoftSF
-    """
-
   def CloseDynamicsI(self):  
-    """ CLoses input of AMBER NetCDF dynamics file
+    """ CLoses AMBER NetCDF dynamics file
     """
     self.__NcIO_dyn.CloseI()
 
   def ClosePlaneO(self):
-    """ Closes output of RSoftPlane file
+    """ Closes RSoftPlaneO file
     """
     self.__nc_RSoft_O.close() 
 
+  def Test(self, K_test=5, n_eg=None, K=5, \
+          C_parameters=np.array([0.01, 0.1, 1.0, 10., 100.]), \
+          norm_SF=True, norm_plane=True, tol_=0.0001, \
+          max_iter_=10000):
+    """ Tests a softness hyperplane
 
-
-class MDTools:
-  """ Molecular Dynamics Tools for python
-
-  This class is designed to provide some standard molecular dynamics
-  tools to analyze trajectories.
-
-  """
-
-  def __init__(self):
-    self.tmp = False
-
-  def DeltaR(self, rf, ri, bb, bc):
-    """ Difference between two vectors or sets of vectors
-    
-    Calculates the difference between two positions rf and ri (rf-ri) 
-    with respect to the box boundaries (bb) and the boundary conditions
-    (bc). The numpy arrays rf and ri can either be single particle
-    positions or sets of particle positions. Let d = dimension of the
-    space and N = number of vectors.
+    Tests a softness hyperplane for all species given an RSoftSF file
+    and an AMBER molecular dynamics file containing dynamics_name
+    data column. Does this testing using stratified nested K-folds.
 
     Parameters
     ----------
-    rf : numpy array, either (d) or (N, d)
-      Final positions of particle(s) in d-dimensional space.
-    ri : numpy array, either (d) or (N, d)
-      Initial positions of particle(s) in d-dimensional space.
-    bb : numpy array, (d, 2)
-      Box boundaries of simulation or the experiment. For d=2, this
-      should be formatted [[low_x, high_x],[low_y, high_y]]. In d=3,
-      [[low_x, high_x],[low_y, high_y],[low_z, high_z]].
-    bc : numpy str array, (d)
-      Boundary conditions of the experiment or simulation. Each value
-      must be a single character string denoting the boundary condition
-      in each direction. 'p' means periodic boundary conditions. 's' 
-      means shrink wrapped bounday conditions. 'f' means fixed boundary
-      conditions.
+    K_test : int, optional
+      Positive integer of folds for nested K-folds cross-validation to 
+      in test set. K_test = 5 is used by default.
+    Descriptions of other parameters can be found in Train function
+
 
     Returns
     -------
-    dr : numpy array, either (d) or (N, d)
-      The rf-ri given the box boundaries and boundary conditions.
+    numpy array (n_type,3)
+      Array that contains the test set accuracy, the test set accuracy
+      of rearranging particles, and the test set accuracy of 
+      non-rearranging particles.
 
     """
 
-    # Checks if all dimensions are matching
-    dim_f = rf.shape[-1]
-    dim_i = ri.shape[-1]
-    dim_bc = len(bc)
-    dim_bb = bb.shape[0]
-    if dim_f != dim_i or dim_f != dim_bc or dim_f != dim_bb:
-      str_ = 'ERROR: dimension mismatch for rf, ri, bc, and'
-      str_ += ' bb.shape[0]'
-      sys.exit(str_)
+    # test acc array
+    test_acc = np.zeros((self.__n_type, 3))
+    n_test_eg = np.zeros((self.__n_type, 3))
 
-    # Checks if rf and ri are vectors or vector of vectors
-    arr_f_dim = len(rf.shape)
-    arr_i_dim = len(ri.shape)
+    # Saving examples for real training later and shuffling examples
+    for idx_type, type_ in enumerate(self.__types_unique):
+      np.random.shuffle(self.training_R[idx_type])
+      np.random.shuffle(self.training_NR[idx_type])
+    training_R = list(self.training_R)
+    training_NR = list(self.training_NR)
 
-    # CASE: both rf and ri are vectors
-    if arr_f_dim == 1 and arr_i_dim == 1:
-      dr = rf - ri
-      idx_p_arr = np.where(bc=='p')[0]
-      for idx_p in idx_p_arr:
-        L = bb[idx_p,1] - bb[idx_p,0]
-        if dr[idx_p]>L/2: dr[idx_p] -= L
-        if dr[idx_p]<-L/2: dr[idx_p] += L
 
-    # CASE: rf or ri are vectors of vectors
-    elif arr_f_dim == 2 and arr_i_dim == 1 or\
-          arr_f_dim == 1 and arr_i_dim == 2 or\
-          arr_f_dim == 2 and arr_i_dim == 2:
+    for K_ in range(K_test):
+      print('K = '+str(K_))
 
-      # If rf and ri are vectors of vectors ensures they have
-      # the same number of particles, N
-      if arr_f_dim == 2 and arr_i_dim == 2:
-        if rf.shape[0] != ri.shape[0]:
-          str_ = 'ERROR: rf and ri don\'t have same number of '
-          str_ += 'particles, N'
-          sys.exit(str_)
+      # Creates a testing an training set from original training set
+      testing_R = []
+      testing_NR = []
+      for idx_type, type_ in enumerate(self.__types_unique):
 
-      dr = rf - ri
-      idx_p_arr = np.where(bc=='p')[0]
-      for idx_p in idx_p_arr:
-        L = bb[idx_p,1] - bb[idx_p,0]
-        dr2 = dr
-        dr[dr[:,idx_p]>L/2,idx_p] -= L
-        dr[dr[:,idx_p]<-L/2,idx_p] += L
+        # Finds rearrangements and non-rearrangements of given particle
+        # type
+        Rs_type = self.training_R[idx_type]
+        NRs_type = self.training_NR[idx_type]
 
-    # CASE: rf or ri are neither vectors or vectors of vectors
-    else:
-      sys.exit('ERROR: rf or ri are not vectors or vectors of vectors')
+        # Finds a test set of rearrangements
+        Rs_type_test = Rs_type[K_::K_test]
+        NRs_type_test = NRs_type[K_::K_test]
+        n_test = min(len(Rs_type_test),len(NRs_type_test))
+        Rs_type_test = Rs_type_test[:n_test]
+        NRs_type_test = NRs_type_test[:n_test]
+        testing_R.append(Rs_type_test)
+        testing_NR.append(NRs_type_test)
 
-    return dr
-            
-  def GetNList(self, pos_t, bb_t, bc, R_c):
-    """ Obtains a neighbor list for a set of particles
+        # Deletes test set from training set
+        Rs_type = np.delete(Rs_type, \
+              list(range(K_,len(Rs_type),K_test)),axis=0)
+        NRs_type = np.delete(NRs_type, \
+              list(range(K_,len(NRs_type),K_test)), axis=0)
+        self.training_R[idx_type] = Rs_type
+        self.training_NR[idx_type] = NRs_type
 
-    Finds all of the neighbors within a cuttoff distance (R_c) for a 
-    set of particles (pos_t) given a set of box boundaries (bb_t), and
-    a set of boundary conditions.
+      # Trains softness model using reduced training set
+      self.Train(n_eg=n_eg, K=K, \
+            C_parameters=C_parameters, norm_SF=norm_SF, \
+            norm_plane=norm_plane, tol_=tol_, \
+            max_iter_=max_iter_)
+
+      # Tests new plane against test set
+      for idx_type, type_ in enumerate(self.__types_unique):
+
+        # Finds number of soft rearrangements and hard 
+        # non-rearrangements
+        soft_Rs = self.GetSoft(testing_R[idx_type])
+        soft_NRs = self.GetSoft(testing_NR[idx_type])
+        nRs = np.sum(soft_Rs > 0)
+        nNRs = np.sum(soft_NRs < 0)
+
+        # Calculates # of correctly classified particles
+        test_acc[idx_type][0] += nRs+nNRs
+        n_test_eg[idx_type][0] += len(soft_Rs)+len(soft_NRs)
+        test_acc[idx_type][1] += nRs
+        n_test_eg[idx_type][1] += len(soft_Rs)
+        test_acc[idx_type][2] += nNRs
+        n_test_eg[idx_type][2] += len(soft_NRs)
+
+      # Returns self.training_R and self.training_NR to original state
+      self.training_R = list(training_R)
+      self.training_NR = list(training_NR)
+
+    # Calculates test set accuracy
+    test_acc = test_acc / n_test_eg
+
+    return test_acc
+
+  def GetSoft(self, particles):
+    """ Gets softness of a set of particles
+
+    Finds the softness of a set of particles, i.e. either an array of 
+    particles frames and labels or all particles in a given frame.
 
     Parameters
     ----------
-    pos_t : numpy array, (n_p, d)
-      Set of n_p particle positions in d-dimensional space
-    bb_t : numpy array, (d, 2)
-      Box boundaries of simulation or the experiment. For d=2, this
-      should be formatted [[low_x, high_x],[low_y, high_y]]. In d=3,
-      [[low_x, high_x],[low_y, high_y],[low_z, high_z]].
-    bc : numpy str array, (d)
-      Boundary conditions of the experiment or simulation. Each value
-      must be a single character string denoting the boundary condition
-      in each direction. 'p' means periodic boundary conditions. 's' 
-      means shrink wrapped bounday conditions. 'f' means fixed boundary
-      conditions.
-    R_c : float
-      Cutoff radius of the simulation.
+    particles : numpy array (n_eg, 2)
+      Numpy array where each row is a particle, the first column 
+      represents the particle frame, and the second column is the 
+      particle id or an int describing the frame of which to get all
+      particle softnesses
 
     Returns
     -------
-    n_list : python array, (n_p)
-      Python list in which n_list[i] is a numpy array of all neighbors
-      of particle i from pos_t. 
+    numpy array
+      Numpy array in which each value is a softness value of the
+      particles given.
 
     """
 
-    # Initializes variables
-    self.__R_c_2 = R_c*R_c
-    self.__n_p = pos_t.shape[0]
-    self.__d = pos_t.shape[1]
-    self.__n_list_t = [[] for p in range(self.__n_p)]
-    cell_delta_arr = self.__InitializeCellDeltaArr()
+    if not self.__openSFI:
+      print('ERROR: Must use OpenSFI before GetSoft.')
+      sys.exit(-1)
+    if not self.__containsParticles:
+      print('ERROR: RSoftSF file must contain particles to use this')
+      print('      file.')
+      sys.exit(-1)
 
-    # Bins particles into cells
-    particles_in_cell = self.__BinParticlesIntoCells(pos_t, bb_t, R_c)
-    n_cells_tot = len(particles_in_cell)
+    # Obtains structure functions
+    SFs = self._ParticlesToSFs(particles)
 
-    for cell_idx in range(n_cells_tot):
-      # Initializes shift
-      shift = np.zeros(self.__d)
 
-      # Adds neighbors from same cell
-      self.__AddNeighbors(pos_t, particles_in_cell, R_c, shift,\
-            cell_idx, cell_idx)
-      cell_pos = self.__Unstack(cell_idx)
+    soft_arr = np.zeros(len(particles))
+    for idx_particle, particle in enumerate(particles):
 
-      # Adds neighbors from neighboring cells
-      for cell_delta in cell_delta_arr:
+      f = particle[0]
+      p = particle[1]
+      type_ = self.__NcIO_dyn.GetDataCol(f,'type')[p]
+      idx_type = np.where(type_==self.__types_unique)[0]
 
-        # checks if cells are neighbors
-        are_neighbors, neigh_cell_pos, shift = self.__AddCellPos(\
-                cell_pos, cell_delta, bb_t, bc)
-
-        # if cells are neighbors, adds particles to neighbor list
-        if are_neighbors:
-          neigh_cell_idx = self.__Stack(neigh_cell_pos)
-          self.__AddNeighbors(pos_t, particles_in_cell, R_c, shift,
-                cell_idx, neigh_cell_idx)
-
-    return self.__n_list_t
-
-  def __InitializeCellDeltaArr(self):
-    # determines list of neighoring cells
-    if self.__d == 2:
-      cell_delta_arr = np.array([\
-            [-1,1], [0,1], [1,1], [1,0]])
-    else:
-      cell_delta_arr = np.array([\
-            [-1,-1,1], [-1,0,1], [-1,1,1],\
-            [0,-1,1], [0,0,1], [0,1,1],\
-            [1,-1,1], [1,0,1], [1,1,1],\
-            [-1,1,0], [0,1,0], [1,1,0],\
-            [1,0,0]])
-    return cell_delta_arr
-
-  def __BinParticlesIntoCells(self, pos_t, bb_t, R_c):
-
-    # Finds number of cells in each dimension and cell lengths
-    L = (bb_t[:,1]-bb_t[:,0]).astype(float)
-    self.__n_cells = (L/R_c).astype(int)
-    self.__n_cells[self.__n_cells < 3] = 3
-    self.__cell_lengths = L / self.__n_cells
-    self.__n_cells_tot = np.prod(self.__n_cells)
-
-    # Place particles in cells
-    particles_in_cell = [[] for cells in range(self.__n_cells_tot)]
-    cell_pos = ((pos_t-bb_t[:,0])/self.__cell_lengths).astype(int)
-    cell_idx = self.__Stack(cell_pos)
-    for pp in range(pos_t.shape[0]):
-      particles_in_cell[cell_idx[pp]].append(pp)
-
-    return particles_in_cell
-
-  def __Stack(self, cell_pos):
-    # CASE: cell_pos is a vector
-    if len(cell_pos.shape)==1:
-      if self.__d==2:
-        n_x = self.__n_cells[0]
-        cell_idx = cell_pos[0]+cell_pos[1]*n_x
-      elif self.__d==3:
-        n_x = self.__n_cells[0]
-        n_y = self.__n_cells[1]
-        cell_idx = cell_pos[0]+(cell_pos[1]+cell_pos[2]*n_x)*n_y
-
-    # CASE cell_pos is a vector of vectors
-    elif len(cell_pos.shape)==2:
-      if self.__d==2:
-        n_x = self.__n_cells[0]
-        cell_idx = cell_pos[:,0]+cell_pos[:,1]*n_x
-      elif self.__d==3:
-        n_x = self.__n_cells[0]
-        n_y = self.__n_cells[1]
-        cell_idx = cell_pos[:,0]+(cell_pos[:,1]+cell_pos[:,2]*n_x)*n_y
-
-    return cell_idx
-
-  def __Unstack(self, cell_idx):
-    if self.__d==2:
-      n_x = self.__n_cells[0]
-      y = int(cell_idx/n_x)
-      x = int(cell_idx-y*n_x)
-      cell_pos = np.array([x,y])
-    elif self.__d==3:
-      n_x = self.__n_cells[0]
-      n_y = self.__n_cells[1]
-      z = int(cell_idx/(n_x*n_y))
-      y = int((cell_idx-z*n_x*n_y)/n_x)
-      x = int((cell_idx-z*n_x*n_y-y*n_x))
-      cell_pos = np.array([x,y,z])
-    return cell_pos
-
-  def __AddNeighbors(self, pos_t, particles_in_cell, R_c, shift,\
-        cell_idx, neigh_cell_idx):
-    n_p_cell = len(particles_in_cell[cell_idx])
-    n_p_neigh_cell = len(particles_in_cell[neigh_cell_idx])
-
-    for p_cell in range(n_p_cell):
-      # Particle index
-      p = particles_in_cell[cell_idx][p_cell];
-
-      # Ensures no double counting
-      if(cell_idx==neigh_cell_idx):
-        n_p_neigh_cell = p_cell
-
-      for p_neigh_cell in range(n_p_neigh_cell):
-        # Neighboring particle index
-        p_neigh = particles_in_cell[neigh_cell_idx][p_neigh_cell]
-
-        r_vec = pos_t[p]-(pos_t[p_neigh]+shift)
-        sq_sum = np.sum(r_vec*r_vec)
-        if sq_sum<self.__R_c_2:
-          self.__n_list_t[p].append(p_neigh)
-          self.__n_list_t[p_neigh].append(p)
-
-  def __AddCellPos(self, cell_pos, cell_delta, bb_t, bc):
-    neigh_cell_pos = cell_pos + cell_delta
-    shift = np.zeros(self.__d)
-    are_neighbors = True
-    for dd in range(self.__d): 
-      if bc[dd] == 'p': 
-        if neigh_cell_pos[dd]==-1:
-          neigh_cell_pos[dd] = self.__n_cells[dd]-1
-          shift[dd] = bb_t[dd][0]-bb_t[dd][1]
-        elif neigh_cell_pos[dd]==self.__n_cells[dd]:
-          neigh_cell_pos[dd] = 0
-          shift[dd] = bb_t[dd][1]-bb_t[dd][0]
+      # Loads plane (a) and intercept (b)
+      if self.__containsRadial:
+        a_rad = self.radial_plane[idx_type]
+      if self.__containsAngular:
+        a_ang = self.angular_plane[idx_type]
       else:
-        if neigh_cell_pos[dd]==-1 or \
-              neigh_cell_pos[dd]==self.__n_cells[dd]:
-          are_neighbors = False
+        a_ang = np.array([])
+      a = np.hstack((a_rad,a_ang))
+      b = self.intercept[idx_type]
 
-    return (are_neighbors, neigh_cell_pos, shift)
+      # Calculates softness
+      soft_arr[idx_particle] = np.dot(a,SFs[idx_particle])+b
+
+    return soft_arr
+
+
+  def SetRSoftSF(self, etol_rad = None, mus = None, Ls = None, \
+        radial_Xs = None, radial_Ys = None, etol_ang = None, \
+        xis = None, lambdas = None, zetas = None, angular_Xs = None, \
+        angular_Ys = None, angular_Zs = None):
+    """ Sets RSoft structure functions
+
+    Sets RSoftSF structure function parameters for computation. Checks
+    parameters are valid if not throws an error. Also, prints out the
+    cutoff radius Rc of the structure funcions being used. 
+
+    Parameters
+    ----------
+    etol_rad : float, optional
+      Error tolerance for the radial structure functions 
+      0 < etol_rad < 1
+    mus : numpy array (n_SF_rad), optional
+      mu parameters for all radial structure functions
+    Ls : numpy array (n_SF_rad), optional
+      L parameters for all radial structure functions
+    radial_Xs : numpy int array (n_SF_rad), optional
+      Integer particle type labels (X) for all radial structure 
+      functions
+    radial_Ys : numpy int array (n_SF_rad), optional
+      Integer particle type labels (Y) for all radial structure 
+      functions
+    etol_ang : float, optional
+      Error tolerance for the angular structure functions 
+      0 < etol_ang < 1
+    xis : numpy array (n_SF_rad), optional
+      xi parameters for all angular structure functions
+    lambdas : numpy int array (n_SF_rad), optional
+      lambda parameters for all angular structure functions. Must be 
+      +/-1
+    zetas : numpy int array (n_SF_rad), optional
+      zeta parameters for all angular structure functions.
+    angular_Xs : numpy int array (n_SF_rad), optional
+      Integer particle type labels (X) for all angular structure 
+      functions
+    angular_Ys : numpy int array (n_SF_rad), optional
+      Integer particle type labels (Y) for all angular structure 
+      functions
+    angular_Zs : numpy int array (n_SF_rad), optional
+      Integer particle type labels (Z) for all angular structure 
+      functions
+
+    """
+    # Initializes global cutoff radius
+    Rc_global = 0
+
+    # Checks if any radial inputs used. If so, if any parameters are 
+    # not None then throws an error assuming the user is confused. 
+    # Checks all inputs are valid.
+    if any(v is None for v in [etol_rad, mus, Ls, radial_Xs, radial_Ys]):
+      if any(v is not None for v in (etol_rad, mus, Ls, radial_Xs, \
+            radial_Ys)):
+        print('ERROR: If radial structure functions are used, must ')
+        print('      supply etol_rad, mus, Ls, radial_Xs, radial_Ys ')
+        print('      to SetRSoftSF')
+        sys.exit(-1)
+    else:
+     
+      # Marks that it contains radial structure functions
+      self.__containsRadial = True 
+
+      # Initializes radial structure function variables
+      if etol_rad > 0 and etol_rad < 1: 
+        self.etol_radial = etol_rad
+      else:
+        print('ERROR: 0 < etol_rad < 1 used in SetRSoftSF')
+        sys.exit(-1)
+      if any(len(mus) != len(arr) for arr in (Ls, radial_Xs, \
+            radial_Ys)):
+        print('ERROR: Length of mus, radial_Xs, and radial_Ys in ')
+        print('      SetRSoftSF must be equal')
+        sys.exit(-1)
+      self.mus = mus
+      self.Ls = Ls 
+      if np.all(np.mod(radial_Xs,1)==0):
+        self.radial_Xs = radial_Xs.astype(int)
+      else:
+        print('ERROR: radial_Xs used in SetRSoftSF must be integers')
+        sys.exit(-1)
+      if np.all(np.mod(radial_Ys,1)==0):
+        self.radial_Ys = radial_Ys.astype(int)
+      else:
+        print('ERROR: radial_Ys used in SetRSoftSF must be integers')
+        sys.exit(-1)
+
+      # Outputs radial cut-off radii
+      print('Calculating radial cutoff...')
+      Rc_max = 0.0
+      for SF in range(len(mus)):
+        mu = mus[SF]
+        L = Ls[SF]
+        X = radial_Xs[SF]
+        Y = radial_Ys[SF]
+        Rc = mu+L*sqrt(log(1/etol_rad))
+        print('  mu='+str(mu)+', L='+str(L)+', X='+str(X)+', Y='+\
+              str(Y)+' --> Rc='+str(Rc))
+        if Rc > Rc_max:
+          Rc_max = Rc 
+      print('Rc_radial='+str(Rc_max))
+      print(' ')
+      print('--------------------------------------------------------')
+      if Rc_max > Rc_global:
+        Rc_global = Rc_max
+
+    # Checks if any angular inputs used. If so, if any parameters are 
+    # not None then throws an error assuming the user is confused. 
+    # Checks all inputs are valid.
+    if any(v is None for v in [etol_ang, xis, lambdas, angular_Xs, 
+          angular_Ys, angular_Zs]):
+      if any(v is not None for v in (etol_ang, xis, lambdas, zetas, \
+            angular_Xs, angular_Ys, angular_Zs)):
+        print('ERROR: If angular structure functions are used, must ')
+        print('      supply etol_ang, xis, lambdas, zetas, angular_Xs,')
+        print('      angular_Ys, angular_Zs')
+        print('      to SetRSoftSF')
+        sys.exit(-1)
+    else:
+
+      # Marks that contains angular structure functions
+      self.__containsAngular = True 
+
+      # Initializes angular structure function variables
+      if etol_ang > 0 and etol_ang < 1: 
+        self.etol_angular = etol_ang
+      else:
+        print('ERROR: 0 < etol_ang < 1 used in SetRSoftSF')
+        sys.exit(-1)
+      if any(len(xis) != len(arr) for arr in (lambdas, zetas, \
+            angular_Xs, angular_Ys, angular_Zs)):
+        print('ERROR: Length of xis, zetas, angular_Xs, angular_Ys, ')
+        print('      and angular_Zs in SetRSoftSF must be equal')
+        sys.exit(-1)
+      self.xis = xis
+      if np.all(np.abs(lambdas)==1):
+        self.lambdas = lambdas
+      else:
+        print('ERROR: lambdas used in SetRSoftSF must be +/-1')
+        sys.exit(-1)
+      if np.all(np.mod(zetas,1)==0):
+        self.zetas = zetas.astype(int)
+      else:
+        print('ERROR: angular_Xs used in SetRSoftSF must be integers')
+        sys.exit(-1)
+      if np.all(np.mod(angular_Xs,1)==0):
+        self.angular_Xs = angular_Xs.astype(int)
+      else:
+        print('ERROR: angular_Xs used in SetRSoftSF must be integers')
+        sys.exit(-1)
+      if np.all(np.mod(angular_Ys,1)==0):
+        self.angular_Ys = angular_Ys.astype(int)
+      else:
+        print('ERROR: angular_Ys used in SetRSoftSF must be integers')
+        sys.exit(-1)
+      if np.all(np.mod(angular_Zs,1)==0):
+        self.angular_Zs = angular_Zs.astype(int)
+      else:
+        print('ERROR: angular_Zs used in SetRSoftSF must be integers')
+        sys.exit(-1)
+
+      # Outputs radial cut-off radii
+      print('Calculating angular cutoff...')
+      Rc_max = 0.0
+      for SF in range(len(xis)):
+        xi = xis[SF]
+        l = lambdas[SF]
+        zeta = zetas[SF]
+        X = angular_Xs[SF]
+        Y = angular_Ys[SF]
+        Z = angular_Zs[SF]
+        if l==1:
+          Rc = xi*sqrt(2.0*log(1.0/etol_ang)/3.0)
+        else:
+          Rc = xi*sqrt(log(1.0/etol_ang)/2.0)
+        print('  xi='+str(xi)+', lambda='+str(l)+', zeta='+str(zeta)+\
+              ', X='+str(X)+', Y='+str(Y)+', Z='+str(Z)+' --> Rc='+str(Rc))
+        if Rc > Rc_max:
+          Rc_max = Rc 
+      print('Rc_angular='+str(Rc_max))
+      print(' ')
+      print('--------------------------------------------------------')
+      if Rc_max > Rc_global:
+        Rc_global = Rc_max
+
+    # Sets structure functions into netCDF file
+    self.__SetSFParams()
+
+    print('Rc='+str(Rc_global))
 
 
 
