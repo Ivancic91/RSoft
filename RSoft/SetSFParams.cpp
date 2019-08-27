@@ -27,7 +27,7 @@ void RSoft::SetSFParams()
   {
     // Defines radial attributes
     status = nc_put_att_double(nc_id_O, NC_GLOBAL, 
-          "radial_error_tolerance", NC_DOUBLE, 1, etol_radial_arr);
+          "radial_error_tolerance", NC_FLOAT, 1, etol_radial_arr);
     CheckNCError(status);
 
     // Defines radial dimensions
@@ -37,10 +37,10 @@ void RSoft::SetSFParams()
 
     // Defines radial variables
     radial_SF_var_dims[0] = radial_structure_function_dim_id_O;
-    status = nc_def_var(nc_id_O, "mus", NC_DOUBLE, 1, radial_SF_var_dims,
+    status = nc_def_var(nc_id_O, "mus", NC_FLOAT, 1, radial_SF_var_dims,
           &mus_var_id_O);
     CheckNCError(status);
-    status = nc_def_var(nc_id_O, "Ls", NC_DOUBLE, 1, radial_SF_var_dims,
+    status = nc_def_var(nc_id_O, "Ls", NC_FLOAT, 1, radial_SF_var_dims,
           &Ls_var_id_O);
     CheckNCError(status);
     status = nc_def_var(nc_id_O, "radial_Xs", NC_INT, 1, radial_SF_var_dims,
@@ -80,7 +80,7 @@ void RSoft::SetSFParams()
   {
     // Defines angular attributes
     status = nc_put_att_double(nc_id_O, NC_GLOBAL, 
-          "angular_error_tolerance", NC_DOUBLE, 1, etol_angular_arr);
+          "angular_error_tolerance", NC_FLOAT, 1, etol_angular_arr);
     CheckNCError(status);
 
     // Defines angular dimensions
@@ -90,10 +90,10 @@ void RSoft::SetSFParams()
 
     // Defines angular variables
     angular_SF_var_dims[0] = angular_structure_function_dim_id_O;
-    status = nc_def_var(nc_id_O, "xis", NC_DOUBLE, 1,
+    status = nc_def_var(nc_id_O, "xis", NC_FLOAT, 1,
           angular_SF_var_dims, &xis_var_id_O);
     CheckNCError(status);
-    status = nc_def_var(nc_id_O, "zetas", NC_DOUBLE, 1,
+    status = nc_def_var(nc_id_O, "zetas", NC_FLOAT, 1,
           angular_SF_var_dims, &zetas_var_id_O);
     CheckNCError(status);
     status = nc_def_var(nc_id_O, "lambdas", NC_INT, 1,

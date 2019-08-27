@@ -65,7 +65,7 @@ void RSoft::WriteSFs(int f)
       radial_structures_var_dims[1] = atom_dim_id_O;
       radial_structures_var_dims[2] = 
             radial_structure_function_dim_id_O;
-      status = nc_def_var(nc_id_O, "radial_structures", NC_DOUBLE, 3,
+      status = nc_def_var(nc_id_O, "radial_structures", NC_FLOAT, 3,
             radial_structures_var_dims, &radial_structures_var_id_O); 
       CheckNCError(status);
       status = nc_enddef(nc_id_O);
@@ -81,7 +81,7 @@ void RSoft::WriteSFs(int f)
       angular_structures_var_dims[1] = atom_dim_id_O;
       angular_structures_var_dims[2] = 
             angular_structure_function_dim_id_O;
-      status = nc_def_var(nc_id_O, "angular_structures", NC_DOUBLE, 3,
+      status = nc_def_var(nc_id_O, "angular_structures", NC_FLOAT, 3,
             angular_structures_var_dims, &angular_structures_var_id_O);
       CheckNCError(status);
       status = nc_enddef(nc_id_O);

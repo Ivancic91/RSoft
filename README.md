@@ -106,6 +106,7 @@ ncdump command which will print the contents of train.nc to the
 terminal.
 
 ```bash
+ncdump -h train.nc
 ncdump train.nc
 conda deactivate
 ```
@@ -182,9 +183,8 @@ various simulations and experiments, and (c) it is easy to make
 mistakes when choosing structure functions that lead to a noisy 
 softness fields or lead to slow calculations (see FAQs below).
 
-To get a pre-made set of structure functions we will copy them from 
-the archive. Then, we will use the ncdump command to view the structure
-function set.
+To get a pre-made set of structure functions, we will copy them from 
+the archive.
 
 ```bash
 cd ~/RSoft/Tutorial/Kob-Andersen/work/
@@ -214,7 +214,15 @@ cd ~/RSoft/Tutorial/Kob-Andersen/work/
 ./CalcSF.exe phop.nc KA.SF.nc p p p phop.SF.nc
 ```
 
-The above code will take around 1 minute to run.
+The above code will take around 1 minute to run. The result, phop.SF.nc
+is a RSoftSF file in which all of the structure functions listed in 
+KA.SF.nc are evaluated for every particle in phop.nc. Therefore, 
+phop.SF.nc is an RSoftSF file *with* particles evaluated. *NOTE:* even
+though this is a relatively small file with relatively few structure 
+functions the size of phop.SF.nc is 182M! File sizes for these files
+can typically run several gigabytes. This is typically not much of a
+limitation, however, because this file can (and should) be deleted
+after training has occured.
 
 **(Step 4)** Traditional approach to training.
 
@@ -227,15 +235,18 @@ it has "not rearranged". The idea is to then separate these two sets
 (which are taken to be sampled to be equal in size) and separate their
 structure functions with a linear SVM.
 
-This is all implemented via the RSoftPython code using sklearn. An 
-example script is provided in the ARCHIVE.
+This is all implemented via the RSoftPython code using sklearn. An
+example script is provided in the ARCHIVE. One provides this script 
+with an RSoftSF file with particles evaluated as as well as a 
+corresponding AMBER file with some sort of dynamics (phop, D2min, ect)
+is evaluated for each particle. An example script is provided in the 
+ARCHIVE.
 
 ```bash
 cd ~/RSoft/Tutorial/Kob-Andersen/work/
 cp ~/RSoft/ARCHIVE/PYTHON/TrainPlane.py .
 conda activate RSoft
 python TrainPlane.py
-conda deactivate
 ```
 
 This code will output an RSoftPlane file. This file has everything one
@@ -244,6 +255,7 @@ file using ncdump.
 
 ```bash
 ncdump KA.plane.nc
+conda deactivate
 ```
 
 Note that two hyperplanes have been trained; one for type 1 and one 
@@ -252,11 +264,111 @@ be found at https://ivancic91.github.io/RSoft/.
 
 **(Step 5)** Testing the softness field.
 
+We would now like to test our softness results on a set of independent
+data. To do this we will calculate a phop and softness field for a set
+of independent test data. We start by making an executable to calculate
+softness quickly. 
 
+```bash
+cd ~/RSoft/
+cp ARCHIVE/RSoft/CalcSoft.cpp RSoft_MAIN.cpp
+cd Debug
+make all
+cp RSoft.exe ~/RSoft/Tutorial/Kob-Andersen/work/CalcSoft.exe
+```
+
+Now let's take some independent "test" data that we generated in 
+LAMMPS, convert it to AMBER format, and evaluate phop on it. 
+
+```bash
+cd ~/RSoft/Tutorial/Kob-Andersen
+scp data/test/run.lammpstrj work/test.lammpstrj
+cd work
+./Phop.exe test.nc 10 p p p phop_test.nc
+./CalcSoft.exe phop_test.nc KA.plane.nc p p p soft_test.nc
+```
+
+One basic test of a softness field is to plot the probability that
+a particle is soft given a certain dynamical value, i.e. <a href="https://www.codecogs.com/eqnedit.php?latex=P(S>0|p_{hop})" target="_blank"><img src="https://latex.codecogs.com/gif.latex?P(S>0|p_{hop})" title="P(S>0|p_{hop})" /></a>
+. This plot (which can be made for both types of particles) typically 
+monotonically increases to some value. We may interpret this value as
+the maximum predictive strength of softness given a particular set of 
+structure functions and training method. Other simple tests can be 
+found in published results.
+
+```bash
+cp ~/RSoft/ARCHIVE/PYTHON/PSoftGivenPhop.py .
+conda activate RSoft
+python PSoftGivenDynamics.py
+conda deactivate
+```
+
+This will provide two datasets where the first column is phop and the
+second is P(S>0|phop). The third column is an error estimate. The data
+should look roughly like this:
+
+![](Tutorial/Kob-Andersen/data/images/phop_vs_P_soft_given_phop.png)
+
+The output of the code gives a couple of quick numbers to quantify the 
+resulting hyperplane as well. An example of the output is below:
+
+```bash
+TYPE = 1
+  Percentage of rearranging particles that are soft:
+  P(S>0|R) = 0.7292682926829268
+  Percentage of particles that are soft:
+  P(S>0) = 0.3126770938446014
+TYPE = 2
+  Percentage of rearranging particles that are soft:
+  P(S>0|R) = 0.8383102694828842
+  Percentage of particles that are soft:
+  P(S>0) = 0.0979757820383451
+```
+
+The idea here is that if the percentage of the rearranging particle
+that are soft is high, but the total percentage of particles that
+are soft is low, the quality of the hyperplane is good. Typically,
+people publish numbers similar to these and you can see how your numbers
+match up against other people's numbers.
+
+In this case, the type 2 particle plane is okay; maybe a little worse
+than typical accuracies people quote of around 85-90%, but the type
+1 particles are significantly worse. Poor hyperplane development occurs
+for one of three reasons. 
+
+First, the chosen structure functions may be poor descriptors of the 
+particle's local environment. This may mean that you need to add more of 
+the standard structure functions or you may need to add your own 
+structure functions. One common example of this is in polydispersed 
+experimental systems; it's been found that adding the particle's radii 
+as a structure function is usful in these situations. 
+
+Second, you may not have provided the SVM clear enough examples of 
+rearranging and non-rearranging particles. This could mean that the set 
+of parameters which characterize your dynamics are not very good 
+(for example [tR] in this case), or it could mean that your training 
+parameters are not very good (the rearrangement threshold is too small,
+the timescale to dictate a non-rearrangement is too short, the 
+non-rearrangement cutoff is tol large). These can be easily tweeked by
+changing the TrainPlane.py file.
+
+Third, you may not have enough rearranging particle examples. Because
+the hyperplane is a fit to the training data, if you do not have enough
+training data your hyperplane will be poor. You may test this by 
+building hyperplanes with less data and checking their test-set 
+accuracy. If you have enough training data so that your test-set 
+accuracy has flattened out, you have enough training data. 
+
+I suspect the problem with this data is that (a) the non-rearrangement
+timescale is a little short for the type 1 (large) particles (only 1/2
+of an alpha-relaxation time) and (b) that the structure functions around
+these particles are fairly short-ranged. If you want you can try, fixing
+these problems yourself as an exercise!
 
 ## FAQs
 
-- **How do I determine what a "rearrangement" is?**
+- **How do I only train/calculate softness in a particular region of my
+experiment or simulation?**
 
 - **How do I determine which structure functions to use?**
 

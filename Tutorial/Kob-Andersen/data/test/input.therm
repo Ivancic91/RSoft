@@ -1,0 +1,66 @@
+#-------------------------- Initial Setup -------------------------------------#
+  units             lj
+  atom_style        atomic
+  boundary          p p p # PBC
+#------------------------------------------------------------------------------#
+
+
+#-------------------------- Atomic Setup --------------------------------------#
+# Initializes KA 80-20 at a density rho = 1.2 for 10000 particles 
+
+  lattice           sc 1.0 # Define lattice.
+  region            sim_box block -4.705 4.705 -4.705 4.705 -4.705 4.705 # Geometrical region.
+  create_box        2 sim_box # Create simulation box.
+  create_atoms      1 random 800 89377615 sim_box # Create atoms on the lattice
+  create_atoms      2 random 200 28947267 sim_box # Create atoms on the lattice
+
+  mass              1 1
+  mass              2 1
+  pair_style        lj/cut 2.5 # Define interaction potential.
+  pair_coeff        1 1 1.0 1.0
+  pair_coeff        1 2 1.5 0.80 
+  pair_coeff        2 2 0.5 0.88
+
+  minimize          1.0e-4 1.0e-6 10000 10000 #Minimizes the energy e
+
+#------------------------------------------------------------------------------#
+
+
+#-------------------------------- Dumps ---------------------------------------#
+# Dump stride is choosen so that ~25 frames are printed for thermalizeation
+# this should be enough to prove (using intermediate scattering function, pe, ke,
+# and pressure data) that we have equilibrated our system
+  dump              dumpID all custom 8000 therm.lammpstrj id type x y z
+#------------------------------------------------------------------------------#
+
+
+#------------------------------ Fixes -----------------------------------------#
+  fix               integrator all nvt temp 1.0 1.0 1.0
+#------------------------------------------------------------------------------#
+
+
+#------------------------- Thermo stuff ---------------------------------------#
+# Timestep chosen so that we are well below (~1/40) the fastest vibrational 
+# frequency of the system (sqrt(m/V''(r0)) where r0 is the minima of the LJ
+# potential. Thermo choosen for same reason as dump. Initial velocity choosen
+# to be temperature of initial randomization
+  thermo_style      custom step pe ke press temp # Output.
+  thermo            8000 # Output stride.
+  timestep          0.005
+  velocity          all create 1.0 18903746 mom yes rot yes dist gaussian
+#------------------------------------------------------------------------------#
+
+
+#------------------------- Running the Simulation -----------------------------#
+# Simulation length choosen to be 1000\tau where \tau is the LJ timescale for
+# large particles. This is more than 100x the \tau_\alpha relaxation time at
+# this temperature and should sufficiently randomize and relax the simulation.
+# I checked to ensure this is also long enough to ensure the pe, ke, press, and 
+# temp stablize as well.
+  run               200000
+#------------------------------------------------------------------------------#
+
+
+#------------------------- Writing Simulation data ----------------------------#
+  write_data        data.therm
+#------------------------------------------------------------------------------#
