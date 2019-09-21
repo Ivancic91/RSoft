@@ -467,12 +467,10 @@ class RSoft:
       # Normalizes plane so that sofness has an std of 1
       if norm_plane:
         cov = self._cov_SF[idx_type_SF][:,idx_type_SF]
-        print(cov)
         np.savetxt('cov'+str(type_)+'.dat', cov)
         a = np.dot(plane,np.dot(cov,plane))
         plane /= np.sqrt(a)
         intercept /= np.sqrt(a)
-        print(np.sqrt(a))
 
       # Stores results
       if self.__containsRadial:

@@ -287,7 +287,6 @@ cd work
 conda activate RSoft
 python ConvDumpToNc_KA.py test.lammpstrj test.nc
 conda deactivate
-python 
 ./Phop.exe test.nc 10 p p p phop_test.nc
 ./CalcSoft.exe phop_test.nc KA.plane.nc p p p soft_test.nc
 ```
