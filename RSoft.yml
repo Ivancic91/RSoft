@@ -4,6 +4,7 @@ channels:
 dependencies:
  - scikit-learn
  - netCDF4
+ - pip
  - pip:
    - git+https://github.com/Ivancic91/LammpsIO.git
 

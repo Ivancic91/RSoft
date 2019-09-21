@@ -77,6 +77,7 @@ int main(int argc, char* argv[])
     // Inputs timestep, positions and box bounds from frame
     nc_read.Gett(f,t);
     nc_read.GetPos(f, pos_t);
+    nc_read.GetDataCol(f, "type", type_t);
     nc_read.GetBB(f, bb_t);
     // nc_file_read.GetDataCol(f, "Radius", radius_t);
     //   ^ The above line may be uncommented and modified if there is 
@@ -85,6 +86,7 @@ int main(int argc, char* argv[])
 
     // Sets positions, box boundaries and boundary conditions of frame
     rs.SetPos(pos_t);
+    rs.SetType(type_t);
     rs.SetBB(bb_t);
     rs.SetBC(bc);
 
@@ -94,6 +96,7 @@ int main(int argc, char* argv[])
     // Outputs time, position, box boundary and softness
     nc_write.Sett(f, t);
     nc_write.SetPos(f, pos_t);
+    nc_write.SetDataCol(f, "type", type_t);
     nc_write.SetBB(f, bb_t);
     nc_write.SetDataCol(f, "S", s_t);
     // nc_file_read.GetDataCol(f, "Radius", radius_t);

@@ -282,8 +282,12 @@ LAMMPS, convert it to AMBER format, and evaluate phop on it.
 
 ```bash
 cd ~/RSoft/Tutorial/Kob-Andersen
-scp data/test/run.lammpstrj work/test.lammpstrj
+cp data/test/run.lammpstrj work/test.lammpstrj
 cd work
+conda activate RSoft
+python ConvDumpToNc_KA.py test.lammpstrj test.nc
+conda deactivate
+python 
 ./Phop.exe test.nc 10 p p p phop_test.nc
 ./CalcSoft.exe phop_test.nc KA.plane.nc p p p soft_test.nc
 ```
@@ -297,7 +301,7 @@ structure functions and training method. Other simple tests can be
 found in published results.
 
 ```bash
-cp ~/RSoft/ARCHIVE/PYTHON/PSoftGivenPhop.py .
+cp ~/RSoft/ARCHIVE/PYTHON/PSoftGivenDynamics.py .
 conda activate RSoft
 python PSoftGivenDynamics.py
 conda deactivate
@@ -315,14 +319,14 @@ resulting hyperplane as well. An example of the output is below:
 ```bash
 TYPE = 1
   Percentage of rearranging particles that are soft:
-  P(S>0|R) = 0.7292682926829268
+  P(S>0|R) = 0.724390243902439
   Percentage of particles that are soft:
-  P(S>0) = 0.3126770938446014
+  P(S>0) = 0.3808097880928355
 TYPE = 2
   Percentage of rearranging particles that are soft:
-  P(S>0|R) = 0.8383102694828842
+  P(S>0|R) = 0.8434085943190095
   Percentage of particles that are soft:
-  P(S>0) = 0.0979757820383451
+  P(S>0) = 0.49391019172552975
 ```
 
 The idea here is that if the percentage of the rearranging particle
@@ -331,10 +335,10 @@ are soft is low, the quality of the hyperplane is good. Typically,
 people publish numbers similar to these and you can see how your numbers
 match up against other people's numbers.
 
-In this case, the type 2 particle plane is okay; maybe a little worse
-than typical accuracies people quote of around 85-90%, but the type
-1 particles are significantly worse. Poor hyperplane development occurs
-for one of three reasons. 
+In this case, the type 2 particle plane is great, but the type
+1 particles have significantly worse accuracy (typically people expect
+P(S>0|R) ~ 85-95% for simulated data and around 75-90% for experimental
+data). Poor hyperplane development occurs for one of three reasons. 
 
 First, the chosen structure functions may be poor descriptors of the 
 particle's local environment. This may mean that you need to add more of 

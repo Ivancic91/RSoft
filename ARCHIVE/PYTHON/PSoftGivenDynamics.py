@@ -49,12 +49,18 @@ for type_ in range(1, n_type+1):
     hist_sum += hist
     hist_soft_sum += hist_soft
 
+    #if type_==2:
+    #  print(len(np.where(S_t>0)[0]))
+    #  print(hist_sum)
+    #  print(hist_soft_sum)
+    #  print('----------')
+
     # Generates probabilities
     idx_R = np.where(10**dynamics_t > cut_off_dynamics)[0]
     n_rearrange += len(idx_R)
     n_soft += len(np.where(S_t > 0)[0])
     n_soft_rearrange += len(np.where(S_t[idx_R] > 0)[0])
-    n_p += len(np.where(~np.isnan(type_t))[0])
+    n_p += len(idx_type_)
 
   # Does error propogation. Obtains output array.
   bin_centers = 10**(0.5*(log10_bin_edges[1:]+log10_bin_edges[:-1]))

@@ -5,19 +5,19 @@ from RSoftTools import RSoft
 # Defines radial SF parameters
 dL = 0.05
 etol_rad = 0.01
-mus_11 = np.arange(0.9,1.4,dL)
+mus_11 = np.arange(0.95,1.4,dL)
 n_SF_rad_11 = len(mus_11)
 radial_Xs_11 = np.ones(n_SF_rad_11)
 radial_Ys_11 = np.ones(n_SF_rad_11)
-mus_12 = np.arange(0.75,1.4,dL)
+mus_12 = np.arange(0.8,1.4,dL)
 n_SF_rad_12 = len(mus_12)
 radial_Xs_12 = np.ones(n_SF_rad_12)
 radial_Ys_12 = 2*np.ones(n_SF_rad_12)
-mus_21 = np.arange(0.75,1.4,dL)
+mus_21 = np.arange(0.8,1.4,dL)
 n_SF_rad_21 = len(mus_21)
 radial_Xs_21 = 2*np.ones(n_SF_rad_21)
 radial_Ys_21 = np.ones(n_SF_rad_21)
-mus_22 = np.arange(0.8,1.4,dL)
+mus_22 = np.arange(0.9,1.4,dL)
 n_SF_rad_22 = len(mus_22)
 radial_Xs_22 = 2*np.ones(n_SF_rad_22)
 radial_Ys_22 = 2*np.ones(n_SF_rad_22)

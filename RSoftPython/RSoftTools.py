@@ -34,6 +34,9 @@ class RSoft:
   mus : numpy array (n_SF_rad)
     Mu structure function parameters (if available). Can obtain after
     OpenSFI used.
+  Ls : numpy array (n_SF_rad)
+    L structure function parameters (if available). Can obtain after
+    OpenSFI used.
   radial_Xs : numpy int array (n_SF_rad)
     Radial_X structure function parameters (if available). Can obtain
     after OpenSFI used.
@@ -121,8 +124,8 @@ class RSoft:
 
     # Opens RSoftPlane and initializes values
     self.__nc_RSoft_O = Dataset(nc_file_name, 'w', format='NETCDF4')
-    self.__nc_RSoft_O.Conventions = 'RSoftSF'
-    self.__nc_RSoft_O.ConventionVersion = '1.0'
+    self.__nc_RSoft_O.Conventions = "RSoftSF"
+    self.__nc_RSoft_O.ConventionVersion = "1.0"
     self.__SetSFParams()
 
     # Marks function as run
@@ -464,9 +467,12 @@ class RSoft:
       # Normalizes plane so that sofness has an std of 1
       if norm_plane:
         cov = self._cov_SF[idx_type_SF][:,idx_type_SF]
+        print(cov)
+        np.savetxt('cov'+str(type_)+'.dat', cov)
         a = np.dot(plane,np.dot(cov,plane))
         plane /= np.sqrt(a)
         intercept /= np.sqrt(a)
+        print(np.sqrt(a))
 
       # Stores results
       if self.__containsRadial:
@@ -511,6 +517,7 @@ class RSoft:
     n_parts = 0
 
     for idx_type, type_ in enumerate(self.__types_unique):
+      n_parts = 0
       idx_type_SF = np.where(self.__types==type_)[0]
       for f in range(self._n_f):
         # Finds particle typtes for each particle. 
@@ -527,15 +534,16 @@ class RSoft:
         else:
           aSF = np.zeros((len(type_ids),0))
         SF = np.hstack((rSF,aSF))
+        SF = SF[~np.isnan(np.sum(SF,axis=1))] # SHOULD REMOVE NaNs
 
         # Counts number of SFs in frame and sums particles to find
-        # mean. We do not use nanmean function in case number of 
+        # mean. We do not use mean function in case number of 
         # particles changes between frames
-        n_parts += np.count_nonzero(~np.isnan(SF[:,0]))
-        mean_SF[idx_type_SF] += np.nansum(SF[:,idx_type_SF],axis=0)
+        n_parts += len(SF)
+        mean_SF[idx_type_SF] += np.sum(SF[:,idx_type_SF],axis=0)
         cov_SF[idx_type_SF[:,None],idx_type_SF[None,:]] += \
               np.dot(SF[:,idx_type_SF].T,SF[:,idx_type_SF])
-      
+
       # Calculates mean and covariance
       mean_SF[idx_type_SF] /= float(n_parts)
       cov_SF[idx_type_SF[:,None],idx_type_SF[None,:]] /= \
@@ -544,9 +552,34 @@ class RSoft:
             np.outer(mean_SF[idx_type_SF],mean_SF[idx_type_SF])
       std_SF = np.sqrt(np.diagonal(cov_SF))
 
-      self._mean_SF = mean_SF
-      self._cov_SF = cov_SF
-      self._std_SF = std_SF
+    # Checks if std_SF == 0 for any structure functions
+    if np.any(std_SF==0):
+      print('WARNING: stdev of following structure functions is 0')
+      idx_0s = np.where(std_SF==0)[0]
+      for idx_0 in idx_0s:
+        std_SF[idx_0] = 1
+        if idx_0 < self.__n_SF_rad:
+          mu = self.mus[idx_0]
+          L = self.Ls[idx_0]
+          X = self.radial_Xs[idx_0]
+          Y = self.radial_Ys[idx_0]
+          print('  radial structure function: mu = '+str(mu)+\
+                ', L = '+str(L)+', X = '+str(X)+', Y = '+str(Y))
+        else:
+          idx_0 -= self.__n_SF_rad
+          xi = self.xis[idx_0]
+          l = self.lambdas[idx_0] 
+          z = self.zetas[idx_0]
+          X = self.angular_Xs[idx_0]
+          Y = self.angular_Ys[idx_0]
+          Z = self.angular_Za[idx_0]
+          print('  angular structure function: xi = '+str(xi)+\
+                ', lambda = '+str(l)+', zeta = '+str(z)+\
+                ', X = '+str(X)+', Y = '+str(Y)+', Z = '+str(Z))
+
+    self._mean_SF = mean_SF
+    self._cov_SF = cov_SF
+    self._std_SF = std_SF
 
   def _ParticlesToSFs(self, particles):
     """ Converts particle frames and ids to structure functions
