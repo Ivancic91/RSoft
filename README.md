@@ -13,6 +13,8 @@ forthcoming.
 The structure functions currently calculated in this code come in two 
 types:
 
+$$G_{R}\left(i; \mu, L, X, Y \right) = \sum_{j} \max \left(e^{-\left(R_{ij}-\mu\right)^2/L^2}-\epsilon_{R}, 0\right)$$
+
 <a href="https://www.codecogs.com/eqnedit.php?latex=G_{\text{R}}(i;&space;\mu,&space;L,&space;X,&space;Y)&space;=&space;\sum_j&space;\text{max}\left(e^{-(R_{ij}-\mu)^2/L^2}-\epsilon_{\text{R}},&space;0\right)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?G_{\text{R}}(i;&space;\mu,&space;L,&space;X,&space;Y)&space;=&space;\sum_j&space;\text{max}\left(e^{-(R_{ij}-\mu)^2/L^2}-\epsilon_{\text{R}},&space;0\right)" title="G_{\text{R}}(i; \mu, L, X, Y) = \sum_j \text{max}\left(e^{-(R_{ij}-\mu)^2/L^2}-\epsilon_{\text{R}}, 0\right)" /></a>
 
 <a href="https://www.codecogs.com/eqnedit.php?latex=G_{\text{A}}(i;&space;\xi,&space;\lambda,&space;\zeta,&space;X,&space;Y,&space;Z)&space;=&space;\sum_{j,k}&space;\text{max}\left(e^{-(R_{ij}^2&plus;R_{jk}^2&plus;R_{ik}^2)/\xi^2}\left(\frac{1&plus;\lambda}{2}\right)^\zeta-\epsilon_{\text{A}},&space;0\right)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?G_{\text{A}}(i;&space;\xi,&space;\lambda,&space;\zeta,&space;X,&space;Y,&space;Z)&space;=&space;\sum_{j,k}&space;\text{max}\left(e^{-(R_{ij}^2&plus;R_{jk}^2&plus;R_{ik}^2)/\xi^2}\left(\frac{1&plus;\lambda}{2}\right)^\zeta-\epsilon_{\text{A}},&space;0\right)" title="G_{\text{A}}(i; \xi, \lambda, \zeta, X, Y, Z) = \sum_{j,k} \text{max}\left(e^{-(R_{ij}^2+R_{jk}^2+R_{ik}^2)/\xi^2}\left(\frac{1+\lambda}{2}\right)^\zeta-\epsilon_{\text{A}}, 0\right)" /></a>
